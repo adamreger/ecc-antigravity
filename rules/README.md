@@ -7,13 +7,13 @@ Rules are organized into a **common** layer plus **language-specific** directori
 rules/
 ├── common/          # Language-agnostic principles (always install)
 │   ├── coding-style.md
+│   ├── development-workflow.md
 │   ├── git-workflow.md
 │   ├── testing.md
 │   ├── performance.md
 │   ├── patterns.md
-│   ├── hooks.md
-│   ├── agents.md
-│   └── security.md
+│   ├── security.md
+│   └── workflows.md
 ├── typescript/      # TypeScript/JavaScript specific
 ├── python/          # Python specific
 ├── golang/          # Go specific
@@ -48,15 +48,15 @@ rules/
 
 ```bash
 # Install common rules (required for all projects)
-cp -r rules/common ~/.claude/rules/common
+cp -r rules/common ~/.agent/rules/common
 
 # Install language-specific rules based on your project's tech stack
-cp -r rules/typescript ~/.claude/rules/typescript
-cp -r rules/python ~/.claude/rules/python
-cp -r rules/golang ~/.claude/rules/golang
-cp -r rules/swift ~/.claude/rules/swift
+cp -r rules/typescript ~/.agent/rules/typescript
+cp -r rules/python ~/.agent/rules/python
+cp -r rules/golang ~/.agent/rules/golang
+cp -r rules/swift ~/.agent/rules/swift
 
-# Attention ! ! ! Configure according to your actual project requirements; the configuration here is for reference only.
+# Note: Use ./install.sh for automated installation (see install.sh --help)
 ```
 
 ## Rules vs Skills
@@ -75,7 +75,6 @@ To add support for a new language (e.g., `rust/`):
    - `coding-style.md` — formatting tools, idioms, error handling patterns
    - `testing.md` — test framework, coverage tools, test organization
    - `patterns.md` — language-specific design patterns
-   - `hooks.md` — PostToolUse hooks for formatters, linters, type checkers
    - `security.md` — secret management, security scanning tools
 3. Each file should start with:
    ```

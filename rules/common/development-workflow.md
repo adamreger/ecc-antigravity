@@ -7,19 +7,19 @@ The Feature Implementation Workflow describes the development pipeline: planning
 ## Feature Implementation Workflow
 
 1. **Plan First**
-   - Use **planner** agent to create implementation plan
+   - Use `/plan` workflow to create implementation plan
    - Identify dependencies and risks
    - Break down into phases
 
 2. **TDD Approach**
-   - Use **tdd-guide** agent
+   - Use `/tdd` workflow
    - Write tests first (RED)
    - Implement to pass tests (GREEN)
    - Refactor (IMPROVE)
    - Verify 80%+ coverage
 
 3. **Code Review**
-   - Use **code-reviewer** agent immediately after writing code
+   - Use `/code-review` workflow immediately after writing code
    - Address CRITICAL and HIGH issues
    - Fix MEDIUM issues when possible
 
