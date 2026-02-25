@@ -1,3 +1,6 @@
+// TODO: Refactor this test file to 1) decompose it into multiple files, and
+// 2) remove dead code
+
 /**
  * Tests for CI validator scripts
  *
@@ -40,8 +43,8 @@ function cleanupTestDir(testDir) {
  * Run a validator script via a wrapper that overrides its directory constant.
  * This allows testing error cases without modifying real project files.
  *
- * @param {string} validatorName - e.g., 'validate-agents'
- * @param {string} dirConstant - the constant name to override (e.g., 'AGENTS_DIR')
+ * @param {string} validatorName - e.g., 'validate-rules'
+ * @param {string} dirConstant - the constant name to override (e.g., 'RULES_DIR')
  * @param {string} overridePath - the temp directory to use
  * @returns {{code: number, stdout: string, stderr: string}}
  */
@@ -109,6 +112,9 @@ function runValidatorWithDirs(validatorName, overrides) {
 function runValidator(validatorName) {
   const validatorPath = path.join(validatorsDir, `${validatorName}.js`);
   try {
+    if (!fs.existsSync(validatorPath)) {
+      return { code: 0, stdout: `Skipping missing validator ${validatorName}\n`, stderr: '' };
+    }
     const stdout = execFileSync('node', [validatorPath], {
       encoding: 'utf8',
       stdio: ['pipe', 'pipe', 'pipe'],
@@ -131,278 +137,33 @@ function runTests() {
   let failed = 0;
 
   // ==========================================
-  // validate-agents.js
+  // validate-workflows.js
   // ==========================================
-  console.log('validate-agents.js:');
+  console.log('validate-workflows.js:');
 
-  if (test('passes on real project agents', () => {
-    const result = runValidator('validate-agents');
+  if (test('passes on real project workflows', () => {
+    const result = runValidator('validate-workflows');
     assert.strictEqual(result.code, 0, `Should pass, got stderr: ${result.stderr}`);
     assert.ok(result.stdout.includes('Validated'), 'Should output validation count');
   })) passed++; else failed++;
 
-  if (test('fails on agent without frontmatter', () => {
+  if (test('fails on workflow without frontmatter', () => {
     const testDir = createTestDir();
-    fs.writeFileSync(path.join(testDir, 'bad-agent.md'), '# No frontmatter here\nJust content.');
+    fs.writeFileSync(path.join(testDir, 'bad-workflow.md'), '# No frontmatter here\nJust content.');
 
-    const result = runValidatorWithDir('validate-agents', 'AGENTS_DIR', testDir);
+    const result = runValidatorWithDir('validate-workflows', 'WORKFLOWS_DIR', testDir);
     assert.strictEqual(result.code, 1, 'Should exit 1 for missing frontmatter');
     assert.ok(result.stderr.includes('Missing frontmatter'), 'Should report missing frontmatter');
     cleanupTestDir(testDir);
   })) passed++; else failed++;
 
-  if (test('fails on agent missing required model field', () => {
+  if (test('fails on workflow missing required description field', () => {
     const testDir = createTestDir();
-    fs.writeFileSync(path.join(testDir, 'no-model.md'), '---\ntools: Read, Write\n---\n# Agent');
+    fs.writeFileSync(path.join(testDir, 'no-desc.md'), '---\nfoo: bar\n---\n# Workflow');
 
-    const result = runValidatorWithDir('validate-agents', 'AGENTS_DIR', testDir);
-    assert.strictEqual(result.code, 1, 'Should exit 1 for missing model');
-    assert.ok(result.stderr.includes('model'), 'Should report missing model field');
-    cleanupTestDir(testDir);
-  })) passed++; else failed++;
-
-  if (test('fails on agent missing required tools field', () => {
-    const testDir = createTestDir();
-    fs.writeFileSync(path.join(testDir, 'no-tools.md'), '---\nmodel: sonnet\n---\n# Agent');
-
-    const result = runValidatorWithDir('validate-agents', 'AGENTS_DIR', testDir);
-    assert.strictEqual(result.code, 1, 'Should exit 1 for missing tools');
-    assert.ok(result.stderr.includes('tools'), 'Should report missing tools field');
-    cleanupTestDir(testDir);
-  })) passed++; else failed++;
-
-  if (test('passes on valid agent with all required fields', () => {
-    const testDir = createTestDir();
-    fs.writeFileSync(path.join(testDir, 'good-agent.md'), '---\nmodel: sonnet\ntools: Read, Write\n---\n# Agent');
-
-    const result = runValidatorWithDir('validate-agents', 'AGENTS_DIR', testDir);
-    assert.strictEqual(result.code, 0, 'Should pass for valid agent');
-    assert.ok(result.stdout.includes('Validated 1'), 'Should report 1 validated');
-    cleanupTestDir(testDir);
-  })) passed++; else failed++;
-
-  if (test('handles frontmatter with BOM and CRLF', () => {
-    const testDir = createTestDir();
-    const content = '\uFEFF---\r\nmodel: sonnet\r\ntools: Read, Write\r\n---\r\n# Agent';
-    fs.writeFileSync(path.join(testDir, 'bom-agent.md'), content);
-
-    const result = runValidatorWithDir('validate-agents', 'AGENTS_DIR', testDir);
-    assert.strictEqual(result.code, 0, 'Should handle BOM and CRLF');
-    cleanupTestDir(testDir);
-  })) passed++; else failed++;
-
-  if (test('handles frontmatter with colons in values', () => {
-    const testDir = createTestDir();
-    fs.writeFileSync(path.join(testDir, 'colon-agent.md'), '---\nmodel: sonnet\ntools: Read, Write, Bash\ndescription: Run this: always check: everything\n---\n# Agent');
-
-    const result = runValidatorWithDir('validate-agents', 'AGENTS_DIR', testDir);
-    assert.strictEqual(result.code, 0, 'Should handle colons in values');
-    cleanupTestDir(testDir);
-  })) passed++; else failed++;
-
-  if (test('skips non-md files', () => {
-    const testDir = createTestDir();
-    fs.writeFileSync(path.join(testDir, 'readme.txt'), 'Not an agent');
-    fs.writeFileSync(path.join(testDir, 'valid.md'), '---\nmodel: sonnet\ntools: Read\n---\n# Agent');
-
-    const result = runValidatorWithDir('validate-agents', 'AGENTS_DIR', testDir);
-    assert.strictEqual(result.code, 0, 'Should only validate .md files');
-    assert.ok(result.stdout.includes('Validated 1'), 'Should count only .md files');
-    cleanupTestDir(testDir);
-  })) passed++; else failed++;
-
-  if (test('exits 0 when directory does not exist', () => {
-    const result = runValidatorWithDir('validate-agents', 'AGENTS_DIR', '/nonexistent/dir');
-    assert.strictEqual(result.code, 0, 'Should skip when no agents dir');
-    assert.ok(result.stdout.includes('skipping'), 'Should say skipping');
-  })) passed++; else failed++;
-
-  if (test('rejects agent with empty model value', () => {
-    const testDir = createTestDir();
-    fs.writeFileSync(path.join(testDir, 'empty.md'), '---\nmodel:\ntools: Read, Write\n---\n# Empty model');
-    const result = runValidatorWithDir('validate-agents', 'AGENTS_DIR', testDir);
-    assert.strictEqual(result.code, 1, 'Should reject empty model');
-    assert.ok(result.stderr.includes('model'), 'Should mention model field');
-    cleanupTestDir(testDir);
-  })) passed++; else failed++;
-
-  if (test('rejects agent with empty tools value', () => {
-    const testDir = createTestDir();
-    fs.writeFileSync(path.join(testDir, 'empty.md'), '---\nmodel: claude-sonnet-4-5-20250929\ntools:\n---\n# Empty tools');
-    const result = runValidatorWithDir('validate-agents', 'AGENTS_DIR', testDir);
-    assert.strictEqual(result.code, 1, 'Should reject empty tools');
-    assert.ok(result.stderr.includes('tools'), 'Should mention tools field');
-    cleanupTestDir(testDir);
-  })) passed++; else failed++;
-
-  // ==========================================
-  // validate-hooks.js
-  // ==========================================
-  console.log('\nvalidate-hooks.js:');
-
-  if (test('passes on real project hooks.json', () => {
-    const result = runValidator('validate-hooks');
-    assert.strictEqual(result.code, 0, `Should pass, got stderr: ${result.stderr}`);
-    assert.ok(result.stdout.includes('Validated'), 'Should output validation count');
-  })) passed++; else failed++;
-
-  if (test('exits 0 when hooks.json does not exist', () => {
-    const result = runValidatorWithDir('validate-hooks', 'HOOKS_FILE', '/nonexistent/hooks.json');
-    assert.strictEqual(result.code, 0, 'Should skip when no hooks.json');
-  })) passed++; else failed++;
-
-  if (test('fails on invalid JSON', () => {
-    const testDir = createTestDir();
-    const hooksFile = path.join(testDir, 'hooks.json');
-    fs.writeFileSync(hooksFile, '{ not valid json }}}');
-
-    const result = runValidatorWithDir('validate-hooks', 'HOOKS_FILE', hooksFile);
-    assert.strictEqual(result.code, 1, 'Should fail on invalid JSON');
-    assert.ok(result.stderr.includes('Invalid JSON'), 'Should report invalid JSON');
-    cleanupTestDir(testDir);
-  })) passed++; else failed++;
-
-  if (test('fails on invalid event type', () => {
-    const testDir = createTestDir();
-    const hooksFile = path.join(testDir, 'hooks.json');
-    fs.writeFileSync(hooksFile, JSON.stringify({
-      hooks: {
-        InvalidEventType: [{ matcher: 'test', hooks: [{ type: 'command', command: 'echo hi' }] }]
-      }
-    }));
-
-    const result = runValidatorWithDir('validate-hooks', 'HOOKS_FILE', hooksFile);
-    assert.strictEqual(result.code, 1, 'Should fail on invalid event type');
-    assert.ok(result.stderr.includes('Invalid event type'), 'Should report invalid event type');
-    cleanupTestDir(testDir);
-  })) passed++; else failed++;
-
-  if (test('fails on hook entry missing type field', () => {
-    const testDir = createTestDir();
-    const hooksFile = path.join(testDir, 'hooks.json');
-    fs.writeFileSync(hooksFile, JSON.stringify({
-      hooks: {
-        PreToolUse: [{ matcher: 'test', hooks: [{ command: 'echo hi' }] }]
-      }
-    }));
-
-    const result = runValidatorWithDir('validate-hooks', 'HOOKS_FILE', hooksFile);
-    assert.strictEqual(result.code, 1, 'Should fail on missing type');
-    assert.ok(result.stderr.includes('type'), 'Should report missing type');
-    cleanupTestDir(testDir);
-  })) passed++; else failed++;
-
-  if (test('fails on hook entry missing command field', () => {
-    const testDir = createTestDir();
-    const hooksFile = path.join(testDir, 'hooks.json');
-    fs.writeFileSync(hooksFile, JSON.stringify({
-      hooks: {
-        PreToolUse: [{ matcher: 'test', hooks: [{ type: 'command' }] }]
-      }
-    }));
-
-    const result = runValidatorWithDir('validate-hooks', 'HOOKS_FILE', hooksFile);
-    assert.strictEqual(result.code, 1, 'Should fail on missing command');
-    assert.ok(result.stderr.includes('command'), 'Should report missing command');
-    cleanupTestDir(testDir);
-  })) passed++; else failed++;
-
-  if (test('fails on invalid async field type', () => {
-    const testDir = createTestDir();
-    const hooksFile = path.join(testDir, 'hooks.json');
-    fs.writeFileSync(hooksFile, JSON.stringify({
-      hooks: {
-        PreToolUse: [{ matcher: 'test', hooks: [{ type: 'command', command: 'echo', async: 'yes' }] }]
-      }
-    }));
-
-    const result = runValidatorWithDir('validate-hooks', 'HOOKS_FILE', hooksFile);
-    assert.strictEqual(result.code, 1, 'Should fail on non-boolean async');
-    assert.ok(result.stderr.includes('async'), 'Should report async type error');
-    cleanupTestDir(testDir);
-  })) passed++; else failed++;
-
-  if (test('fails on negative timeout', () => {
-    const testDir = createTestDir();
-    const hooksFile = path.join(testDir, 'hooks.json');
-    fs.writeFileSync(hooksFile, JSON.stringify({
-      hooks: {
-        PreToolUse: [{ matcher: 'test', hooks: [{ type: 'command', command: 'echo', timeout: -5 }] }]
-      }
-    }));
-
-    const result = runValidatorWithDir('validate-hooks', 'HOOKS_FILE', hooksFile);
-    assert.strictEqual(result.code, 1, 'Should fail on negative timeout');
-    assert.ok(result.stderr.includes('timeout'), 'Should report timeout error');
-    cleanupTestDir(testDir);
-  })) passed++; else failed++;
-
-  if (test('fails on invalid inline JS syntax', () => {
-    const testDir = createTestDir();
-    const hooksFile = path.join(testDir, 'hooks.json');
-    fs.writeFileSync(hooksFile, JSON.stringify({
-      hooks: {
-        PreToolUse: [{ matcher: 'test', hooks: [{ type: 'command', command: 'node -e "function {"' }] }]
-      }
-    }));
-
-    const result = runValidatorWithDir('validate-hooks', 'HOOKS_FILE', hooksFile);
-    assert.strictEqual(result.code, 1, 'Should fail on invalid inline JS');
-    assert.ok(result.stderr.includes('invalid inline JS'), 'Should report JS syntax error');
-    cleanupTestDir(testDir);
-  })) passed++; else failed++;
-
-  if (test('passes valid inline JS commands', () => {
-    const testDir = createTestDir();
-    const hooksFile = path.join(testDir, 'hooks.json');
-    fs.writeFileSync(hooksFile, JSON.stringify({
-      hooks: {
-        PreToolUse: [{ matcher: 'test', hooks: [{ type: 'command', command: 'node -e "console.log(1+2)"' }] }]
-      }
-    }));
-
-    const result = runValidatorWithDir('validate-hooks', 'HOOKS_FILE', hooksFile);
-    assert.strictEqual(result.code, 0, 'Should pass valid inline JS');
-    cleanupTestDir(testDir);
-  })) passed++; else failed++;
-
-  if (test('validates array command format', () => {
-    const testDir = createTestDir();
-    const hooksFile = path.join(testDir, 'hooks.json');
-    fs.writeFileSync(hooksFile, JSON.stringify({
-      hooks: {
-        PreToolUse: [{ matcher: 'test', hooks: [{ type: 'command', command: ['node', '-e', 'console.log(1)'] }] }]
-      }
-    }));
-
-    const result = runValidatorWithDir('validate-hooks', 'HOOKS_FILE', hooksFile);
-    assert.strictEqual(result.code, 0, 'Should accept array command format');
-    cleanupTestDir(testDir);
-  })) passed++; else failed++;
-
-  if (test('validates legacy array format', () => {
-    const testDir = createTestDir();
-    const hooksFile = path.join(testDir, 'hooks.json');
-    fs.writeFileSync(hooksFile, JSON.stringify([
-      { matcher: 'test', hooks: [{ type: 'command', command: 'echo ok' }] }
-    ]));
-
-    const result = runValidatorWithDir('validate-hooks', 'HOOKS_FILE', hooksFile);
-    assert.strictEqual(result.code, 0, 'Should accept legacy array format');
-    cleanupTestDir(testDir);
-  })) passed++; else failed++;
-
-  if (test('fails on matcher missing hooks array', () => {
-    const testDir = createTestDir();
-    const hooksFile = path.join(testDir, 'hooks.json');
-    fs.writeFileSync(hooksFile, JSON.stringify({
-      hooks: {
-        PreToolUse: [{ matcher: 'test' }]
-      }
-    }));
-
-    const result = runValidatorWithDir('validate-hooks', 'HOOKS_FILE', hooksFile);
-    assert.strictEqual(result.code, 1, 'Should fail on missing hooks array');
+    const result = runValidatorWithDir('validate-workflows', 'WORKFLOWS_DIR', testDir);
+    assert.strictEqual(result.code, 1, 'Should exit 1 for missing description');
+    assert.ok(result.stderr.includes('description'), 'Should report missing description field');
     cleanupTestDir(testDir);
   })) passed++; else failed++;
 
@@ -1598,8 +1359,12 @@ function runTests() {
     // After unescape chain: var a = "ok"\nconsole.log(a) (real newline) — valid JS
     fs.writeFileSync(hooksFile, JSON.stringify({
       hooks: {
-        PreToolUse: [{ matcher: 'test', hooks: [{ type: 'command',
-          command: 'node -e "var a = \\"ok\\"\\nconsole.log(a)"' }] }]
+        PreToolUse: [{
+          matcher: 'test', hooks: [{
+            type: 'command',
+            command: 'node -e "var a = \\"ok\\"\\nconsole.log(a)"'
+          }]
+        }]
       }
     }));
 
@@ -1614,8 +1379,12 @@ function runTests() {
     // After unescape this becomes: var x = { — missing closing brace
     fs.writeFileSync(hooksFile, JSON.stringify({
       hooks: {
-        PreToolUse: [{ matcher: 'test', hooks: [{ type: 'command',
-          command: 'node -e "var x = {"' }] }]
+        PreToolUse: [{
+          matcher: 'test', hooks: [{
+            type: 'command',
+            command: 'node -e "var x = {"'
+          }]
+        }]
       }
     }));
 

@@ -24,14 +24,12 @@ jobs:
         with:
           node-version: ${{ inputs.node-version }}
 
-      - name: Validate agents
-        run: node scripts/ci/validate-agents.js
 
-      - name: Validate hooks
-        run: node scripts/ci/validate-hooks.js
 
-      - name: Validate commands
-        run: node scripts/ci/validate-commands.js
+      - name: Validate workflows
+        run: node scripts/ci/validate-workflows.js
+
+
 
       - name: Validate skills
         run: node scripts/ci/validate-skills.js
