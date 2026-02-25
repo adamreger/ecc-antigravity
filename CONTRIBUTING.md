@@ -1,6 +1,10 @@
-# Contributing to Everything Claude Code
+# ⚠️ ATTENTION ⚠️
 
-Thanks for wanting to contribute! This repo is a community resource for Claude Code users.
+This file **HAS NOT BEEN UPDATED** from the forked repo. I'll update it as I go.
+
+# Contributing to ECC-Antigravity
+
+Thanks for wanting to contribute! This repo is a community resource for Antigravity users.
 
 ## Table of Contents
 
