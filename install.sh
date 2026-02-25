@@ -1,24 +1,23 @@
 #!/usr/bin/env bash
-# install.sh — Install claude rules while preserving directory structure.
+# install.sh — Install Antigravity workflows, skills, and rules into a target project.
 #
 # Usage:
-#   ./install.sh [--target <claude|cursor>] <language> [<language> ...]
+#   ./install.sh [options] <project-path> <language> [<language> ...]
+#
+# Options:
+#   -h, --help            Show help message
+#   --list-languages      List available languages
 #
 # Examples:
-#   ./install.sh typescript
-#   ./install.sh typescript python golang
-#   ./install.sh --target cursor typescript
-#   ./install.sh --target cursor typescript python golang
+#   ./install.sh ~/myproject python
+#   ./install.sh ~/myproject typescript python
+#   ./install.sh . python                    # install into current directory
 #
-# Targets:
-#   claude  (default) — Install rules to ~/.claude/rules/
-#   cursor  — Install rules, agents, skills, commands, and MCP to ./.cursor/
-#
-# This script copies rules into the target directory keeping the common/ and
-# language-specific subdirectories intact so that:
-#   1. Files with the same name in common/ and <language>/ don't overwrite
-#      each other.
-#   2. Relative references (e.g. ../common/coding-style.md) remain valid.
+# What gets installed:
+#   workflows/        → <project>/.agent/workflows/
+#   skills/           → <project>/.agent/skills/
+#   rules/common/     → <project>/.agent/rules/common/
+#   rules/<language>/ → <project>/.agent/rules/<language>/
 
 set -euo pipefail
 
@@ -31,142 +30,187 @@ while [ -L "$SCRIPT_PATH" ]; do
     [[ "$SCRIPT_PATH" != /* ]] && SCRIPT_PATH="$link_dir/$SCRIPT_PATH"
 done
 SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_PATH")" && pwd)"
+
+WORKFLOWS_DIR="$SCRIPT_DIR/workflows"
+SKILLS_DIR="$SCRIPT_DIR/skills"
 RULES_DIR="$SCRIPT_DIR/rules"
 
-# --- Parse --target flag ---
-TARGET="claude"
-if [[ "${1:-}" == "--target" ]]; then
-    if [[ -z "${2:-}" ]]; then
-        echo "Error: --target requires a value (claude or cursor)" >&2
-        exit 1
+# --- ANSI Colors ---
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+YELLOW='\033[1;33m'
+CYAN='\033[0;36m'
+BOLD='\033[1m'
+NC='\033[0m' # No Color
+
+show_help() {
+    local error_msg="${1:-}"
+    if [[ -n "$error_msg" ]]; then
+        echo -e "${RED}Error: ${error_msg}${NC}" >&2
+        echo "" >&2
     fi
-    TARGET="$2"
-    shift 2
-fi
 
-if [[ "$TARGET" != "claude" && "$TARGET" != "cursor" ]]; then
-    echo "Error: unknown target '$TARGET'. Must be 'claude' or 'cursor'." >&2
-    exit 1
-fi
-
-# --- Usage ---
-if [[ $# -eq 0 ]]; then
-    echo "Usage: $0 [--target <claude|cursor>] <language> [<language> ...]"
+    echo -e "${BOLD}Usage:${NC} $0 [options] <project-path> <language> [<language> ...]"
     echo ""
-    echo "Targets:"
-    echo "  claude  (default) — Install rules to ~/.claude/rules/"
-    echo "  cursor  — Install rules, agents, skills, commands, and MCP to ./.cursor/"
+    echo "Installs Antigravity workflows, skills, and rules into a target project."
+    echo "This script configures Workspace Rules for a specific project directory."
     echo ""
-    echo "Available languages:"
+    echo -e "${YELLOW}Context:${NC}"
+    echo "  Antigravity supports 'Global Rules' and 'Workspace Rules'."
+    echo "  This script currently handles 'Workspace Rules' by installing them into your project's .agent directory."
+    echo -e "  Learn more: ${BLUE}https://antigravity.google/docs/rules-workflows${NC}"
+    echo ""
+    echo -e "${YELLOW}Options:${NC}"
+    echo -e "  ${CYAN}-h, --help${NC}            Show this help message and exit"
+    echo -e "  ${CYAN}--list-languages${NC}      List available languages and exit"
+    echo ""
+    echo -e "${YELLOW}What gets installed:${NC}"
+    echo "  workflows/        → <project>/.agent/workflows/"
+    echo "  skills/           → <project>/.agent/skills/"
+    echo "  rules/common/     → <project>/.agent/rules/common/"
+    echo "  rules/<language>/ → <project>/.agent/rules/<language>/"
+    echo ""
+    echo -e "${YELLOW}Available languages:${NC}"
     for dir in "$RULES_DIR"/*/; do
+        [[ -d "$dir" ]] || continue
         name="$(basename "$dir")"
         [[ "$name" == "common" ]] && continue
-        echo "  - $name"
+        echo -e "  - ${GREEN}$name${NC}"
     done
+    echo ""
+    echo -e "${YELLOW}Examples:${NC}"
+    echo "  $0 ~/myproject python"
+    echo "  $0 ~/myproject typescript python"
+    echo "  $0 ~/myproject all               # install all available languages"
+    echo "  $0 . python                    # install into current directory"
+}
+
+list_languages() {
+    for dir in "$RULES_DIR"/*/; do
+        [[ -d "$dir" ]] || continue
+        name="$(basename "$dir")"
+        [[ "$name" == "common" ]] && continue
+        echo "$name"
+    done
+}
+
+# --- Parse options ---
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -h|--help)
+            show_help
+            exit 0
+            ;;
+        --list-languages)
+            list_languages
+            exit 0
+            ;;
+        -*)
+            show_help "Unknown option: $1"
+            exit 1
+            ;;
+        *)
+            break
+            ;;
+    esac
+done
+
+# --- Check required parameters ---
+if [[ $# -lt 2 ]]; then
+    show_help "Missing required parameters. You must specify a project path and at least one language."
     exit 1
 fi
 
-# --- Claude target (existing behavior) ---
-if [[ "$TARGET" == "claude" ]]; then
-    DEST_DIR="${CLAUDE_RULES_DIR:-$HOME/.claude/rules}"
+# --- Parse arguments ---
+PROJECT_PATH="$1"
+shift
 
-    # Warn if destination already exists (user may have local customizations)
-    if [[ -d "$DEST_DIR" ]] && [[ "$(ls -A "$DEST_DIR" 2>/dev/null)" ]]; then
-        echo "Note: $DEST_DIR/ already exists. Existing files will be overwritten."
-        echo "      Back up any local customizations before proceeding."
+# Resolve project path
+if [[ ! -d "$PROJECT_PATH" ]]; then
+    echo "Error: '$PROJECT_PATH' is not a directory." >&2
+    exit 1
+fi
+PROJECT_PATH="$(cd "$PROJECT_PATH" && pwd)"
+DEST_DIR="$PROJECT_PATH/.agent"
+
+echo -e "${BOLD}Installing to:${NC} ${CYAN}$DEST_DIR/${NC}"
+echo ""
+
+# --- Warn if destination already exists ---
+if [[ -d "$DEST_DIR" ]] && [[ "$(ls -A "$DEST_DIR" 2>/dev/null)" ]]; then
+    echo -e "${YELLOW}Note: $DEST_DIR/ already exists. Existing files will be overwritten.${NC}"
+    echo -e "${YELLOW}      Back up any local customizations before proceeding.${NC}"
+    echo ""
+    read -r -p "Do you wish to continue and overwrite these files? [y/N] " response
+    if [[ ! "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+        echo -e "\n${RED}Installation cancelled.${NC}"
+        exit 1
     fi
-
-    # Always install common rules
-    echo "Installing common rules -> $DEST_DIR/common/"
-    mkdir -p "$DEST_DIR/common"
-    cp -r "$RULES_DIR/common/." "$DEST_DIR/common/"
-
-    # Install each requested language
-    for lang in "$@"; do
-        # Validate language name to prevent path traversal
-        if [[ ! "$lang" =~ ^[a-zA-Z0-9_-]+$ ]]; then
-            echo "Error: invalid language name '$lang'. Only alphanumeric, dash, and underscore allowed." >&2
-            continue
-        fi
-        lang_dir="$RULES_DIR/$lang"
-        if [[ ! -d "$lang_dir" ]]; then
-            echo "Warning: rules/$lang/ does not exist, skipping." >&2
-            continue
-        fi
-        echo "Installing $lang rules -> $DEST_DIR/$lang/"
-        mkdir -p "$DEST_DIR/$lang"
-        cp -r "$lang_dir/." "$DEST_DIR/$lang/"
-    done
-
-    echo "Done. Rules installed to $DEST_DIR/"
+    echo ""
 fi
 
-# --- Cursor target ---
-if [[ "$TARGET" == "cursor" ]]; then
-    DEST_DIR=".cursor"
-    CURSOR_SRC="$SCRIPT_DIR/.cursor"
+# --- Install workflows ---
+if [[ -d "$WORKFLOWS_DIR" ]]; then
+    echo -e "Installing workflows → ${CYAN}$DEST_DIR/workflows/${NC}"
+    mkdir -p "$DEST_DIR/workflows"
+    cp -r "$WORKFLOWS_DIR/." "$DEST_DIR/workflows/"
+else
+    echo -e "${YELLOW}Warning: workflows/ directory not found in repo, skipping.${NC}" >&2
+fi
 
-    echo "Installing Cursor configs to $DEST_DIR/"
+# --- Install skills ---
+if [[ -d "$SKILLS_DIR" ]]; then
+    echo -e "Installing skills → ${CYAN}$DEST_DIR/skills/${NC}"
+    mkdir -p "$DEST_DIR/skills"
+    cp -r "$SKILLS_DIR/." "$DEST_DIR/skills/"
+else
+    echo -e "${YELLOW}Warning: skills/ directory not found in repo, skipping.${NC}" >&2
+fi
 
-    # --- Rules ---
-    echo "Installing common rules -> $DEST_DIR/rules/"
-    mkdir -p "$DEST_DIR/rules"
-    # Copy common rules (flattened names like common-coding-style.md)
-    if [[ -d "$CURSOR_SRC/rules" ]]; then
-        for f in "$CURSOR_SRC/rules"/common-*.md; do
-            [[ -f "$f" ]] && cp "$f" "$DEST_DIR/rules/"
+# --- Install common rules (always) ---
+echo -e "Installing common rules → ${CYAN}$DEST_DIR/rules/common/${NC}"
+mkdir -p "$DEST_DIR/rules/common"
+cp -r "$RULES_DIR/common/." "$DEST_DIR/rules/common/"
+
+# --- Expand 'all' language if requested ---
+REQUESTED_LANGS=()
+for arg in "$@"; do
+    if [[ "$arg" == "all" ]]; then
+        for dir in "$RULES_DIR"/*/; do
+            [[ -d "$dir" ]] || continue
+            name="$(basename "$dir")"
+            [[ "$name" == "common" ]] && continue
+            REQUESTED_LANGS+=("$name")
         done
+    else
+        REQUESTED_LANGS+=("$arg")
     fi
+done
 
-    # Install language-specific rules
-    for lang in "$@"; do
-        # Validate language name to prevent path traversal
-        if [[ ! "$lang" =~ ^[a-zA-Z0-9_-]+$ ]]; then
-            echo "Error: invalid language name '$lang'. Only alphanumeric, dash, and underscore allowed." >&2
-            continue
-        fi
-        if [[ -d "$CURSOR_SRC/rules" ]]; then
-            found=false
-            for f in "$CURSOR_SRC/rules"/${lang}-*.md; do
-                if [[ -f "$f" ]]; then
-                    cp "$f" "$DEST_DIR/rules/"
-                    found=true
-                fi
-            done
-            if $found; then
-                echo "Installing $lang rules -> $DEST_DIR/rules/"
-            else
-                echo "Warning: no Cursor rules for '$lang' found, skipping." >&2
-            fi
-        fi
-    done
-
-    # --- Agents ---
-    if [[ -d "$CURSOR_SRC/agents" ]]; then
-        echo "Installing agents -> $DEST_DIR/agents/"
-        mkdir -p "$DEST_DIR/agents"
-        cp -r "$CURSOR_SRC/agents/." "$DEST_DIR/agents/"
+# --- Install each requested language ---
+for lang in "${REQUESTED_LANGS[@]}"; do
+    # Validate language name to prevent path traversal
+    if [[ ! "$lang" =~ ^[a-zA-Z0-9_-]+$ ]]; then
+        echo -e "${RED}Error: invalid language name '$lang'. Only alphanumeric, dash, and underscore allowed.${NC}" >&2
+        continue
     fi
-
-    # --- Skills ---
-    if [[ -d "$CURSOR_SRC/skills" ]]; then
-        echo "Installing skills -> $DEST_DIR/skills/"
-        mkdir -p "$DEST_DIR/skills"
-        cp -r "$CURSOR_SRC/skills/." "$DEST_DIR/skills/"
+    lang_dir="$RULES_DIR/$lang"
+    if [[ ! -d "$lang_dir" ]]; then
+        echo -e "${YELLOW}Warning: rules/$lang/ does not exist, skipping.${NC}" >&2
+        continue
     fi
+    echo -e "Installing ${GREEN}$lang${NC} rules → ${CYAN}$DEST_DIR/rules/$lang/${NC}"
+    mkdir -p "$DEST_DIR/rules/$lang"
+    cp -r "$lang_dir/." "$DEST_DIR/rules/$lang/"
+done
 
-    # --- Commands ---
-    if [[ -d "$CURSOR_SRC/commands" ]]; then
-        echo "Installing commands -> $DEST_DIR/commands/"
-        mkdir -p "$DEST_DIR/commands"
-        cp -r "$CURSOR_SRC/commands/." "$DEST_DIR/commands/"
-    fi
-
-    # --- MCP Config ---
-    if [[ -f "$CURSOR_SRC/mcp.json" ]]; then
-        echo "Installing MCP config -> $DEST_DIR/mcp.json"
-        cp "$CURSOR_SRC/mcp.json" "$DEST_DIR/mcp.json"
-    fi
-
-    echo "Done. Cursor configs installed to $DEST_DIR/"
-fi
+echo ""
+echo -e "${GREEN}${BOLD}Done!${NC} Installed to ${CYAN}$DEST_DIR/${NC}"
+echo ""
+echo -e "${BOLD}Installed:${NC}"
+echo -e "  ${GREEN}✓${NC} Workflows ($(ls "$DEST_DIR/workflows/" 2>/dev/null | wc -l | tr -d ' ') files)"
+echo -e "  ${GREEN}✓${NC} Skills ($(ls -d "$DEST_DIR/skills/"*/ 2>/dev/null | wc -l | tr -d ' ') skills)"
+echo -e "  ${GREEN}✓${NC} Rules (common + $(echo "${REQUESTED_LANGS[@]}" | tr ' ' ', '))"
+echo ""
+echo -e "${YELLOW}Try it:${NC} open your project in Antigravity and use ${CYAN}/plan${NC}, ${CYAN}/tdd${NC}, ${CYAN}/code-review${NC}, etc."
