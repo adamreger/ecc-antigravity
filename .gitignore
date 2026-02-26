@@ -34,3 +34,8 @@ private/
 
 # Session templates (not committed)
 examples/sessions/*.tmp
+
+# Project specific
+.antigravity/rules
+.antigravity/skills
+.antigravity/workflows
