@@ -189,7 +189,7 @@ See `skills/` for the full list.
 
 ## Rules
 
-Rules are always-follow guidelines. They're installed to `.agent/rules/` in your project.
+Rules are always-follow guidelines. They're installed to `.antigravity/rules/` in your project.
 
 **Common rules** (language-agnostic): coding style, git workflow, testing, security, performance  
 **Language-specific**: TypeScript, Python, Swift
@@ -231,7 +231,7 @@ This fork removes Claude Code-specific features that don't have Antigravity equi
 | `commands/go-*.md` | Go-specific commands |
 | `agents/go-*.md` | Go-specific agents |
 
-**Agents were converted to workflows** in `workflows/`, adapted to Antigravity's workflow format (8 agents → 9 workflows). The installer copies them to `.agent/workflows/` in target projects.
+**Agents were converted to workflows** in `workflows/`, adapted to Antigravity's workflow format (8 agents → 9 workflows). The installer copies them to `.antigravity/workflows/` in target projects.
 
 **Rules updated** to reference workflows instead of Claude Code agents.
 
