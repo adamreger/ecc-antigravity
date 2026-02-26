@@ -1,9 +1,16 @@
 # Everything Claude Code — Antigravity Edition
 
+[![CI](https://github.com/adamreger/ecc-antigravity/actions/workflows/ci.yml/badge.svg)](https://github.com/adamreger/ecc-antigravity/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+![Shell](https://img.shields.io/badge/-Shell-4EAA25?logo=gnu-bash&logoColor=white)
+![TypeScript](https://img.shields.io/badge/-TypeScript-3178C6?logo=typescript&logoColor=white)
+![Python](https://img.shields.io/badge/-Python-3776AB?logo=python&logoColor=white)
+![Go](https://img.shields.io/badge/-Go-00ADD8?logo=go&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black)
+![Markdown](https://img.shields.io/badge/-Markdown-000000?logo=markdown&logoColor=white)
+
 > **Fork adapted for [Antigravity IDE](https://antigravity.google).**
 > Original repo: [affaan-m/everything-claude-code](https://github.com/affaan-m/everything-claude-code)
-
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 Production-ready **workflows, skills, and rules** for software development, adapted from the battle-tested Claude Code configs by an Anthropic hackathon winner.
 
