@@ -28,9 +28,9 @@ The project is organized into several core components:
 - **`tests/`** — Test suite for scripts and utilities
 
 The `install.sh` script copies these to the correct locations in your project:
-- `workflows/` → `.agent/workflows/`
-- `skills/` → `.agent/skills/`
-- `rules/` → `.agent/rules/`
+- `workflows/` → `.antigravity/workflows/`
+- `skills/` → `.antigravity/skills/`
+- `rules/` → `.antigravity/rules/`
 
 ## Key Workflows
 

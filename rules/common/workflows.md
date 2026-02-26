@@ -2,7 +2,7 @@
 
 ## Available Workflows
 
-Located in `.agent/workflows/` (installed from `workflows/` at repo root):
+Located in `.antigravity/workflows/` (installed from `workflows/` at repo root):
 
 | Workflow | Purpose | When to Use |
 |----------|---------|-------------|

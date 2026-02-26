@@ -36,9 +36,9 @@ cd ecc-antigravity
 ```
 
 The installer copies:
-- `workflows/` → `<project>/.agent/workflows/`
-- `skills/` → `<project>/.agent/skills/`
-- `rules/common/` + language rules → `<project>/.agent/rules/`
+- `workflows/` → `<project>/.antigravity/workflows/`
+- `skills/` → `<project>/.antigravity/skills/`
+- `rules/common/` + language rules → `<project>/.antigravity/rules/`
 
 ### Option 2: Manual Installation
 
@@ -47,11 +47,11 @@ The installer copies:
 git clone https://github.com/YOUR_USERNAME/ecc-antigravity.git
 
 # Copy to your project manually
-mkdir -p YOUR_PROJECT/.agent
-cp -r ecc-antigravity/workflows/YOUR_PROJECT/.agent/workflows/
-cp -r ecc-antigravity/skills/YOUR_PROJECT/.agent/skills/
-cp -r ecc-antigravity/rules/common/YOUR_PROJECT/.agent/rules/common/
-cp -r ecc-antigravity/rules/python/YOUR_PROJECT/.agent/rules/python/
+mkdir -p YOUR_PROJECT/.antigravity
+cp -r ecc-antigravity/workflows/YOUR_PROJECT/.antigravity/workflows/
+cp -r ecc-antigravity/skills/YOUR_PROJECT/.antigravity/skills/
+cp -r ecc-antigravity/rules/common/YOUR_PROJECT/.antigravity/rules/common/
+cp -r ecc-antigravity/rules/python/YOUR_PROJECT/.antigravity/rules/python/
 # ... pick your stack
 ```
 
@@ -98,7 +98,7 @@ Or use the `/setup-pm` workflow in Antigravity.
 
 ```
 ecc-antigravity/
-├── workflows/            # Workflow definitions (installed to .agent/workflows/)
+├── workflows/            # Workflow definitions (installed to .antigravity/workflows/)
 │   ├── plan.md              # /plan — Implementation planning
 │   ├── tdd.md               # /tdd — Test-driven development
 │   ├── code-review.md       # /code-review — Quality & security review

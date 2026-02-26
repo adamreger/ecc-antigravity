@@ -48,13 +48,13 @@ rules/
 
 ```bash
 # Install common rules (required for all projects)
-cp -r rules/common ~/.agent/rules/common
+cp -r rules/common ~/.antigravity/rules/common
 
 # Install language-specific rules based on your project's tech stack
-cp -r rules/typescript ~/.agent/rules/typescript
-cp -r rules/python ~/.agent/rules/python
-cp -r rules/golang ~/.agent/rules/golang
-cp -r rules/swift ~/.agent/rules/swift
+cp -r rules/typescript ~/.antigravity/rules/typescript
+cp -r rules/python ~/.antigravity/rules/python
+cp -r rules/golang ~/.antigravity/rules/golang
+cp -r rules/swift ~/.antigravity/rules/swift
 
 # Note: Use ./install.sh for automated installation (see install.sh --help)
 ```

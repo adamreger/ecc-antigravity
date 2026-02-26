@@ -14,10 +14,10 @@
 #   ./install.sh . python                    # install into current directory
 #
 # What gets installed:
-#   workflows/        → <project>/.agent/workflows/
-#   skills/           → <project>/.agent/skills/
-#   rules/common/     → <project>/.agent/rules/common/
-#   rules/<language>/ → <project>/.agent/rules/<language>/
+#   workflows/        → <project>/.antigravity/workflows/
+#   skills/           → <project>/.antigravity/skills/
+#   rules/common/     → <project>/.antigravity/rules/common/
+#   rules/<language>/ → <project>/.antigravity/rules/<language>/
 
 set -euo pipefail
 
@@ -58,7 +58,7 @@ show_help() {
     echo ""
     echo -e "${YELLOW}Context:${NC}"
     echo "  Antigravity supports 'Global Rules' and 'Workspace Rules'."
-    echo "  This script currently handles 'Workspace Rules' by installing them into your project's .agent directory."
+    echo "  This script currently handles 'Workspace Rules' by installing them into your project's .antigravity directory."
     echo -e "  Learn more: ${BLUE}https://antigravity.google/docs/rules-workflows${NC}"
     echo ""
     echo -e "${YELLOW}Options:${NC}"
@@ -66,10 +66,10 @@ show_help() {
     echo -e "  ${CYAN}--list-languages${NC}      List available languages and exit"
     echo ""
     echo -e "${YELLOW}What gets installed:${NC}"
-    echo "  workflows/        → <project>/.agent/workflows/"
-    echo "  skills/           → <project>/.agent/skills/"
-    echo "  rules/common/     → <project>/.agent/rules/common/"
-    echo "  rules/<language>/ → <project>/.agent/rules/<language>/"
+    echo "  workflows/        → <project>/.antigravity/workflows/"
+    echo "  skills/           → <project>/.antigravity/skills/"
+    echo "  rules/common/     → <project>/.antigravity/rules/common/"
+    echo "  rules/<language>/ → <project>/.antigravity/rules/<language>/"
     echo ""
     echo -e "${YELLOW}Available languages:${NC}"
     for dir in "$RULES_DIR"/*/; do
@@ -132,7 +132,7 @@ if [[ ! -d "$PROJECT_PATH" ]]; then
     exit 1
 fi
 PROJECT_PATH="$(cd "$PROJECT_PATH" && pwd)"
-DEST_DIR="$PROJECT_PATH/.agent"
+DEST_DIR="$PROJECT_PATH/.antigravity"
 
 echo -e "${BOLD}Installing to:${NC} ${CYAN}$DEST_DIR/${NC}"
 echo ""
