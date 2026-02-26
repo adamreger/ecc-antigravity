@@ -35,7 +35,10 @@ private/
 # Session templates (not committed)
 examples/sessions/*.tmp
 
-# Project specific
+# Project antigravity files
 .antigravity/rules
 .antigravity/skills
 .antigravity/workflows
+
+# Internal planning docs
+ROADMAP.md
