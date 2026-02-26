@@ -1,3 +1,5 @@
+# TODO: I don't think this is needed since Antigravity doesn't support plugins
+
 #!/usr/bin/env bash
 set -euo pipefail
 

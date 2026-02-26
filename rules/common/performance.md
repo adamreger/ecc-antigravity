@@ -30,6 +30,7 @@ Lower context sensitivity tasks:
 - Documentation updates
 - Simple bug fixes
 
+<!-- TODO: I need to come back to this and determine if Antigavity supports this -->
 ## Extended Thinking + Plan Mode
 
 Extended thinking is enabled by default, reserving up to 31,999 tokens for internal reasoning.

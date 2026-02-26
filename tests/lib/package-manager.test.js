@@ -215,25 +215,25 @@ function runTests() {
   else failed++;
 
   if (test('respects environment variable', () => {
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      process.env.CLAUDE_PACKAGE_MANAGER = 'yarn';
+      process.env.ANTIGRAVITY_PACKAGE_MANAGER = 'yarn';
       const result = pm.getPackageManager();
       assert.strictEqual(result.name, 'yarn');
       assert.strictEqual(result.source, 'environment');
     } finally {
       if (originalEnv !== undefined) {
-        process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
+        process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
       } else {
-        delete process.env.CLAUDE_PACKAGE_MANAGER;
+        delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
       }
     }
   })) passed++;
   else failed++;
 
   if (test('detects from lock file in project', () => {
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
-    delete process.env.CLAUDE_PACKAGE_MANAGER;
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
+    delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     const testDir = createTestDir();
     try {
       fs.writeFileSync(path.join(testDir, 'bun.lockb'), '');
@@ -243,7 +243,7 @@ function runTests() {
     } finally {
       cleanupTestDir(testDir);
       if (originalEnv !== undefined) {
-        process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
+        process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
       }
     }
   })) passed++;
@@ -253,32 +253,32 @@ function runTests() {
   console.log('\ngetRunCommand:');
 
   if (test('returns correct install command', () => {
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      process.env.CLAUDE_PACKAGE_MANAGER = 'pnpm';
+      process.env.ANTIGRAVITY_PACKAGE_MANAGER = 'pnpm';
       const cmd = pm.getRunCommand('install');
       assert.strictEqual(cmd, 'pnpm install');
     } finally {
       if (originalEnv !== undefined) {
-        process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
+        process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
       } else {
-        delete process.env.CLAUDE_PACKAGE_MANAGER;
+        delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
       }
     }
   })) passed++;
   else failed++;
 
   if (test('returns correct test command', () => {
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      process.env.CLAUDE_PACKAGE_MANAGER = 'npm';
+      process.env.ANTIGRAVITY_PACKAGE_MANAGER = 'npm';
       const cmd = pm.getRunCommand('test');
       assert.strictEqual(cmd, 'npm test');
     } finally {
       if (originalEnv !== undefined) {
-        process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
+        process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
       } else {
-        delete process.env.CLAUDE_PACKAGE_MANAGER;
+        delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
       }
     }
   })) passed++;
@@ -288,32 +288,32 @@ function runTests() {
   console.log('\ngetExecCommand:');
 
   if (test('returns correct exec command for npm', () => {
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      process.env.CLAUDE_PACKAGE_MANAGER = 'npm';
+      process.env.ANTIGRAVITY_PACKAGE_MANAGER = 'npm';
       const cmd = pm.getExecCommand('prettier', '--write .');
       assert.strictEqual(cmd, 'npx prettier --write .');
     } finally {
       if (originalEnv !== undefined) {
-        process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
+        process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
       } else {
-        delete process.env.CLAUDE_PACKAGE_MANAGER;
+        delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
       }
     }
   })) passed++;
   else failed++;
 
   if (test('returns correct exec command for pnpm', () => {
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      process.env.CLAUDE_PACKAGE_MANAGER = 'pnpm';
+      process.env.ANTIGRAVITY_PACKAGE_MANAGER = 'pnpm';
       const cmd = pm.getExecCommand('eslint', '.');
       assert.strictEqual(cmd, 'pnpm dlx eslint .');
     } finally {
       if (originalEnv !== undefined) {
-        process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
+        process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
       } else {
-        delete process.env.CLAUDE_PACKAGE_MANAGER;
+        delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
       }
     }
   })) passed++;
@@ -348,7 +348,7 @@ function runTests() {
   if (test('returns informative prompt', () => {
     const prompt = pm.getSelectionPrompt();
     assert.ok(prompt.includes('Supported package managers'), 'Should list supported managers');
-    assert.ok(prompt.includes('CLAUDE_PACKAGE_MANAGER'), 'Should mention env var');
+    assert.ok(prompt.includes('ANTIGRAVITY_PACKAGE_MANAGER'), 'Should mention env var');
     assert.ok(prompt.includes('lock file'), 'Should mention lock file option');
   })) passed++;
   else failed++;
@@ -363,7 +363,7 @@ function runTests() {
       assert.strictEqual(result.packageManager, 'pnpm');
       assert.ok(result.setAt, 'Should have setAt timestamp');
       // Verify file was created
-      const configPath = path.join(testDir, '.claude', 'package-manager.json');
+      const configPath = path.join(testDir, '.antigravity', 'package-manager.json');
       assert.ok(fs.existsSync(configPath), 'Config file should exist');
       const saved = JSON.parse(fs.readFileSync(configPath, 'utf8'));
       assert.strictEqual(saved.packageManager, 'pnpm');
@@ -421,16 +421,16 @@ function runTests() {
   console.log('\ngetExecCommand (edge cases):');
 
   if (test('returns exec command without args', () => {
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      process.env.CLAUDE_PACKAGE_MANAGER = 'npm';
+      process.env.ANTIGRAVITY_PACKAGE_MANAGER = 'npm';
       const cmd = pm.getExecCommand('prettier');
       assert.strictEqual(cmd, 'npx prettier');
     } finally {
       if (originalEnv !== undefined) {
-        process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
+        process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
       } else {
-        delete process.env.CLAUDE_PACKAGE_MANAGER;
+        delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
       }
     }
   })) passed++;
@@ -440,45 +440,45 @@ function runTests() {
   console.log('\ngetRunCommand (additional):');
 
   if (test('returns correct build command', () => {
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      process.env.CLAUDE_PACKAGE_MANAGER = 'npm';
+      process.env.ANTIGRAVITY_PACKAGE_MANAGER = 'npm';
       assert.strictEqual(pm.getRunCommand('build'), 'npm run build');
     } finally {
       if (originalEnv !== undefined) {
-        process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
+        process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
       } else {
-        delete process.env.CLAUDE_PACKAGE_MANAGER;
+        delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
       }
     }
   })) passed++;
   else failed++;
 
   if (test('returns correct dev command', () => {
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      process.env.CLAUDE_PACKAGE_MANAGER = 'npm';
+      process.env.ANTIGRAVITY_PACKAGE_MANAGER = 'npm';
       assert.strictEqual(pm.getRunCommand('dev'), 'npm run dev');
     } finally {
       if (originalEnv !== undefined) {
-        process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
+        process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
       } else {
-        delete process.env.CLAUDE_PACKAGE_MANAGER;
+        delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
       }
     }
   })) passed++;
   else failed++;
 
   if (test('returns correct custom script command', () => {
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      process.env.CLAUDE_PACKAGE_MANAGER = 'npm';
+      process.env.ANTIGRAVITY_PACKAGE_MANAGER = 'npm';
       assert.strictEqual(pm.getRunCommand('lint'), 'npm run lint');
     } finally {
       if (originalEnv !== undefined) {
-        process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
+        process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
       } else {
-        delete process.env.CLAUDE_PACKAGE_MANAGER;
+        delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
       }
     }
   })) passed++;
@@ -525,19 +525,19 @@ function runTests() {
 
   if (test('falls through on corrupted project config JSON', () => {
     const testDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pm-robust-'));
-    const claudeDir = path.join(testDir, '.claude');
-    fs.mkdirSync(claudeDir, { recursive: true });
-    fs.writeFileSync(path.join(claudeDir, 'package-manager.json'), '{not valid json!!!');
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const antigravityDir = path.join(testDir, '.antigravity');
+    fs.mkdirSync(antigravityDir, { recursive: true });
+    fs.writeFileSync(path.join(antigravityDir, 'package-manager.json'), '{not valid json!!!');
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      delete process.env.CLAUDE_PACKAGE_MANAGER;
+      delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
       const result = pm.getPackageManager({ projectDir: testDir });
       // Should fall through to default (npm) since project config is corrupt
       assert.ok(result.name, 'Should return a package manager');
       assert.ok(result.source !== 'project-config', 'Should not use corrupt project config');
     } finally {
       if (originalEnv !== undefined) {
-        process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
+        process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
       }
       fs.rmSync(testDir, { recursive: true, force: true });
     }
@@ -546,18 +546,18 @@ function runTests() {
 
   if (test('falls through on project config with unknown PM', () => {
     const testDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pm-robust-'));
-    const claudeDir = path.join(testDir, '.claude');
-    fs.mkdirSync(claudeDir, { recursive: true });
-    fs.writeFileSync(path.join(claudeDir, 'package-manager.json'), JSON.stringify({ packageManager: 'nonexistent-pm' }));
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const antigravityDir = path.join(testDir, '.antigravity');
+    fs.mkdirSync(antigravityDir, { recursive: true });
+    fs.writeFileSync(path.join(antigravityDir, 'package-manager.json'), JSON.stringify({ packageManager: 'nonexistent-pm' }));
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      delete process.env.CLAUDE_PACKAGE_MANAGER;
+      delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
       const result = pm.getPackageManager({ projectDir: testDir });
       assert.ok(result.name, 'Should return a package manager');
       assert.ok(result.source !== 'project-config', 'Should not use unknown PM config');
     } finally {
       if (originalEnv !== undefined) {
-        process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
+        process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
       }
       fs.rmSync(testDir, { recursive: true, force: true });
     }
@@ -588,16 +588,16 @@ function runTests() {
   else failed++;
 
   if (test('accepts scoped package names', () => {
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      process.env.CLAUDE_PACKAGE_MANAGER = 'npm';
+      process.env.ANTIGRAVITY_PACKAGE_MANAGER = 'npm';
       const cmd = pm.getRunCommand('@scope/my-script');
       assert.strictEqual(cmd, 'npm run @scope/my-script');
     } finally {
       if (originalEnv !== undefined) {
-        process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
+        process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
       } else {
-        delete process.env.CLAUDE_PACKAGE_MANAGER;
+        delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
       }
     }
   })) passed++;
@@ -622,16 +622,16 @@ function runTests() {
   else failed++;
 
   if (test('accepts dotted binary names like tsc', () => {
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      process.env.CLAUDE_PACKAGE_MANAGER = 'npm';
+      process.env.ANTIGRAVITY_PACKAGE_MANAGER = 'npm';
       const cmd = pm.getExecCommand('tsc');
       assert.strictEqual(cmd, 'npx tsc');
     } finally {
       if (originalEnv !== undefined) {
-        process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
+        process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
       } else {
-        delete process.env.CLAUDE_PACKAGE_MANAGER;
+        delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
       }
     }
   })) passed++;
@@ -640,20 +640,20 @@ function runTests() {
   // getPackageManager source detection tests
   console.log('\ngetPackageManager (source detection):');
 
-  if (test('detects from valid project-config (.claude/package-manager.json)', () => {
+  if (test('detects from valid project-config (.antigravity/package-manager.json)', () => {
     const testDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pm-projcfg-'));
-    const claudeDir = path.join(testDir, '.claude');
-    fs.mkdirSync(claudeDir, { recursive: true });
-    fs.writeFileSync(path.join(claudeDir, 'package-manager.json'), JSON.stringify({ packageManager: 'pnpm' }));
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const antigravityDir = path.join(testDir, '.antigravity');
+    fs.mkdirSync(antigravityDir, { recursive: true });
+    fs.writeFileSync(path.join(antigravityDir, 'package-manager.json'), JSON.stringify({ packageManager: 'pnpm' }));
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      delete process.env.CLAUDE_PACKAGE_MANAGER;
+      delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
       const result = pm.getPackageManager({ projectDir: testDir });
       assert.strictEqual(result.name, 'pnpm', 'Should detect pnpm from project config');
       assert.strictEqual(result.source, 'project-config', 'Source should be project-config');
     } finally {
       if (originalEnv !== undefined) {
-        process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
+        process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
       }
       fs.rmSync(testDir, { recursive: true, force: true });
     }
@@ -662,23 +662,23 @@ function runTests() {
 
   if (test('project-config takes priority over package.json', () => {
     const testDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pm-priority-'));
-    const claudeDir = path.join(testDir, '.claude');
-    fs.mkdirSync(claudeDir, { recursive: true });
+    const antigravityDir = path.join(testDir, '.antigravity');
+    fs.mkdirSync(antigravityDir, { recursive: true });
     // Project config says bun
-    fs.writeFileSync(path.join(claudeDir, 'package-manager.json'), JSON.stringify({ packageManager: 'bun' }));
+    fs.writeFileSync(path.join(antigravityDir, 'package-manager.json'), JSON.stringify({ packageManager: 'bun' }));
     // package.json says yarn
     fs.writeFileSync(path.join(testDir, 'package.json'), JSON.stringify({ packageManager: 'yarn@4.0.0' }));
     // Lock file says npm
     fs.writeFileSync(path.join(testDir, 'package-lock.json'), '{}');
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      delete process.env.CLAUDE_PACKAGE_MANAGER;
+      delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
       const result = pm.getPackageManager({ projectDir: testDir });
       assert.strictEqual(result.name, 'bun', 'Project config should win over package.json and lock file');
       assert.strictEqual(result.source, 'project-config');
     } finally {
       if (originalEnv !== undefined) {
-        process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
+        process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
       }
       fs.rmSync(testDir, { recursive: true, force: true });
     }
@@ -691,15 +691,15 @@ function runTests() {
     fs.writeFileSync(path.join(testDir, 'package.json'), JSON.stringify({ packageManager: 'yarn@4.0.0' }));
     // Lock file says npm
     fs.writeFileSync(path.join(testDir, 'package-lock.json'), '{}');
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      delete process.env.CLAUDE_PACKAGE_MANAGER;
+      delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
       const result = pm.getPackageManager({ projectDir: testDir });
       assert.strictEqual(result.name, 'yarn', 'package.json should win over lock file');
       assert.strictEqual(result.source, 'package.json');
     } finally {
       if (originalEnv !== undefined) {
-        process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
+        process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
       }
       fs.rmSync(testDir, { recursive: true, force: true });
     }
@@ -708,15 +708,15 @@ function runTests() {
 
   if (test('defaults to npm when no config found', () => {
     const testDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pm-default-'));
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      delete process.env.CLAUDE_PACKAGE_MANAGER;
+      delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
       const result = pm.getPackageManager({ projectDir: testDir });
       assert.strictEqual(result.name, 'npm', 'Should default to npm');
       assert.strictEqual(result.source, 'default');
     } finally {
       if (originalEnv !== undefined) {
-        process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
+        process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
       }
       fs.rmSync(testDir, { recursive: true, force: true });
     }
@@ -727,9 +727,9 @@ function runTests() {
   console.log('\nsetPreferredPackageManager (success):');
 
   if (test('successfully saves preferred package manager', () => {
-    // This writes to ~/.claude/package-manager.json — read original to restore
+    // This writes to ~/.antigravity/package-manager.json — read original to restore
     const utils = require('../../scripts/lib/utils');
-    const configPath = path.join(utils.getClaudeDir(), 'package-manager.json');
+    const configPath = path.join(utils.getAntigravityDir(), 'package-manager.json');
     const original = utils.readFile(configPath);
     try {
       const config = pm.setPreferredPackageManager('bun');
@@ -775,89 +775,89 @@ function runTests() {
   console.log('\ngetRunCommand (PM-specific formats):');
 
   if (test('pnpm custom script: pnpm (no run keyword)', () => {
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      process.env.CLAUDE_PACKAGE_MANAGER = 'pnpm';
+      process.env.ANTIGRAVITY_PACKAGE_MANAGER = 'pnpm';
       const cmd = pm.getRunCommand('lint');
       assert.strictEqual(cmd, 'pnpm lint', 'pnpm uses "pnpm <script>" format');
     } finally {
-      if (originalEnv !== undefined) process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
-      else delete process.env.CLAUDE_PACKAGE_MANAGER;
+      if (originalEnv !== undefined) process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
+      else delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     }
   })) passed++;
   else failed++;
 
   if (test('yarn custom script: yarn <script>', () => {
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      process.env.CLAUDE_PACKAGE_MANAGER = 'yarn';
+      process.env.ANTIGRAVITY_PACKAGE_MANAGER = 'yarn';
       const cmd = pm.getRunCommand('format');
       assert.strictEqual(cmd, 'yarn format', 'yarn uses "yarn <script>" format');
     } finally {
-      if (originalEnv !== undefined) process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
-      else delete process.env.CLAUDE_PACKAGE_MANAGER;
+      if (originalEnv !== undefined) process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
+      else delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     }
   })) passed++;
   else failed++;
 
   if (test('bun custom script: bun run <script>', () => {
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      process.env.CLAUDE_PACKAGE_MANAGER = 'bun';
+      process.env.ANTIGRAVITY_PACKAGE_MANAGER = 'bun';
       const cmd = pm.getRunCommand('typecheck');
       assert.strictEqual(cmd, 'bun run typecheck', 'bun uses "bun run <script>" format');
     } finally {
-      if (originalEnv !== undefined) process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
-      else delete process.env.CLAUDE_PACKAGE_MANAGER;
+      if (originalEnv !== undefined) process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
+      else delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     }
   })) passed++;
   else failed++;
 
   if (test('npm custom script: npm run <script>', () => {
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      process.env.CLAUDE_PACKAGE_MANAGER = 'npm';
+      process.env.ANTIGRAVITY_PACKAGE_MANAGER = 'npm';
       const cmd = pm.getRunCommand('lint');
       assert.strictEqual(cmd, 'npm run lint', 'npm uses "npm run <script>" format');
     } finally {
-      if (originalEnv !== undefined) process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
-      else delete process.env.CLAUDE_PACKAGE_MANAGER;
+      if (originalEnv !== undefined) process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
+      else delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     }
   })) passed++;
   else failed++;
 
   if (test('pnpm install returns pnpm install', () => {
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      process.env.CLAUDE_PACKAGE_MANAGER = 'pnpm';
+      process.env.ANTIGRAVITY_PACKAGE_MANAGER = 'pnpm';
       assert.strictEqual(pm.getRunCommand('install'), 'pnpm install');
     } finally {
-      if (originalEnv !== undefined) process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
-      else delete process.env.CLAUDE_PACKAGE_MANAGER;
+      if (originalEnv !== undefined) process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
+      else delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     }
   })) passed++;
   else failed++;
 
   if (test('yarn install returns yarn (no install keyword)', () => {
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      process.env.CLAUDE_PACKAGE_MANAGER = 'yarn';
+      process.env.ANTIGRAVITY_PACKAGE_MANAGER = 'yarn';
       assert.strictEqual(pm.getRunCommand('install'), 'yarn');
     } finally {
-      if (originalEnv !== undefined) process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
-      else delete process.env.CLAUDE_PACKAGE_MANAGER;
+      if (originalEnv !== undefined) process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
+      else delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     }
   })) passed++;
   else failed++;
 
   if (test('bun test returns bun test', () => {
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      process.env.CLAUDE_PACKAGE_MANAGER = 'bun';
+      process.env.ANTIGRAVITY_PACKAGE_MANAGER = 'bun';
       assert.strictEqual(pm.getRunCommand('test'), 'bun test');
     } finally {
-      if (originalEnv !== undefined) process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
-      else delete process.env.CLAUDE_PACKAGE_MANAGER;
+      if (originalEnv !== undefined) process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
+      else delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     }
   })) passed++;
   else failed++;
@@ -866,53 +866,53 @@ function runTests() {
   console.log('\ngetExecCommand (PM-specific formats):');
 
   if (test('pnpm exec: pnpm dlx <binary>', () => {
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      process.env.CLAUDE_PACKAGE_MANAGER = 'pnpm';
+      process.env.ANTIGRAVITY_PACKAGE_MANAGER = 'pnpm';
       assert.strictEqual(pm.getExecCommand('prettier', '--write .'), 'pnpm dlx prettier --write .');
     } finally {
-      if (originalEnv !== undefined) process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
-      else delete process.env.CLAUDE_PACKAGE_MANAGER;
+      if (originalEnv !== undefined) process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
+      else delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     }
   })) passed++;
   else failed++;
 
   if (test('yarn exec: yarn dlx <binary>', () => {
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      process.env.CLAUDE_PACKAGE_MANAGER = 'yarn';
+      process.env.ANTIGRAVITY_PACKAGE_MANAGER = 'yarn';
       assert.strictEqual(pm.getExecCommand('eslint', '.'), 'yarn dlx eslint .');
     } finally {
-      if (originalEnv !== undefined) process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
-      else delete process.env.CLAUDE_PACKAGE_MANAGER;
+      if (originalEnv !== undefined) process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
+      else delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     }
   })) passed++;
   else failed++;
 
   if (test('bun exec: bunx <binary>', () => {
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      process.env.CLAUDE_PACKAGE_MANAGER = 'bun';
+      process.env.ANTIGRAVITY_PACKAGE_MANAGER = 'bun';
       assert.strictEqual(pm.getExecCommand('tsc', '--noEmit'), 'bunx tsc --noEmit');
     } finally {
-      if (originalEnv !== undefined) process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
-      else delete process.env.CLAUDE_PACKAGE_MANAGER;
+      if (originalEnv !== undefined) process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
+      else delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     }
   })) passed++;
   else failed++;
 
   if (test('ignores unknown env var package manager', () => {
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      process.env.CLAUDE_PACKAGE_MANAGER = 'totally-fake-pm';
+      process.env.ANTIGRAVITY_PACKAGE_MANAGER = 'totally-fake-pm';
       const result = pm.getPackageManager();
       // Should ignore invalid env var and fall through
       assert.notStrictEqual(result.name, 'totally-fake-pm', 'Should not use unknown PM');
     } finally {
       if (originalEnv !== undefined) {
-        process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
+        process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
       } else {
-        delete process.env.CLAUDE_PACKAGE_MANAGER;
+        delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
       }
     }
   })) passed++;
@@ -1040,16 +1040,16 @@ function runTests() {
 
   if (test('ignores global config with non-string packageManager', () => {
     // This tests the path through loadConfig where packageManager is not a valid PM name
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      delete process.env.CLAUDE_PACKAGE_MANAGER;
+      delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
       // getPackageManager should fall through to default when no valid config exists
       const result = pm.getPackageManager({ projectDir: os.tmpdir() });
       assert.ok(result.name, 'Should return a package manager name');
       assert.ok(result.config, 'Should return config object');
     } finally {
       if (originalEnv !== undefined) {
-        process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
+        process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
       }
     }
   })) passed++;
@@ -1093,14 +1093,14 @@ function runTests() {
   // ── Round 31: setProjectPackageManager write verification ──
   console.log('\nsetProjectPackageManager (write verification, Round 31):');
 
-  if (test('setProjectPackageManager creates .claude directory if missing', () => {
+  if (test('setProjectPackageManager creates .antigravity directory if missing', () => {
     const testDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pm-mkdir-'));
     try {
-      const claudeDir = path.join(testDir, '.claude');
-      assert.ok(!fs.existsSync(claudeDir), '.claude should not pre-exist');
+      const antigravityDir = path.join(testDir, '.antigravity');
+      assert.ok(!fs.existsSync(antigravityDir), '.antigravity should not pre-exist');
       pm.setProjectPackageManager('npm', testDir);
-      assert.ok(fs.existsSync(claudeDir), '.claude should be created');
-      const configPath = path.join(claudeDir, 'package-manager.json');
+      assert.ok(fs.existsSync(antigravityDir), '.antigravity should be created');
+      const configPath = path.join(antigravityDir, 'package-manager.json');
       assert.ok(fs.existsSync(configPath), 'Config file should be created');
     } finally {
       fs.rmSync(testDir, { recursive: true, force: true });
@@ -1126,40 +1126,40 @@ function runTests() {
   console.log('\ngetExecCommand (safe argument edge cases, Round 31):');
 
   if (test('allows colons in args (e.g. --fix:all)', () => {
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      process.env.CLAUDE_PACKAGE_MANAGER = 'npm';
+      process.env.ANTIGRAVITY_PACKAGE_MANAGER = 'npm';
       const cmd = pm.getExecCommand('eslint', '--fix:all');
       assert.ok(cmd.includes('--fix:all'), 'Colons should be allowed in args');
     } finally {
-      if (originalEnv !== undefined) process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
-      else delete process.env.CLAUDE_PACKAGE_MANAGER;
+      if (originalEnv !== undefined) process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
+      else delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     }
   })) passed++;
   else failed++;
 
   if (test('allows at-sign in args (e.g. @latest)', () => {
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      process.env.CLAUDE_PACKAGE_MANAGER = 'npm';
+      process.env.ANTIGRAVITY_PACKAGE_MANAGER = 'npm';
       const cmd = pm.getExecCommand('create-next-app', '@latest');
       assert.ok(cmd.includes('@latest'), 'At-sign should be allowed in args');
     } finally {
-      if (originalEnv !== undefined) process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
-      else delete process.env.CLAUDE_PACKAGE_MANAGER;
+      if (originalEnv !== undefined) process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
+      else delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     }
   })) passed++;
   else failed++;
 
   if (test('allows equals in args (e.g. --config=path)', () => {
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      process.env.CLAUDE_PACKAGE_MANAGER = 'npm';
+      process.env.ANTIGRAVITY_PACKAGE_MANAGER = 'npm';
       const cmd = pm.getExecCommand('prettier', '--config=.prettierrc');
       assert.ok(cmd.includes('--config=.prettierrc'), 'Equals should be allowed');
     } finally {
-      if (originalEnv !== undefined) process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
-      else delete process.env.CLAUDE_PACKAGE_MANAGER;
+      if (originalEnv !== undefined) process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
+      else delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     }
   })) passed++;
   else failed++;
@@ -1168,44 +1168,44 @@ function runTests() {
   console.log('\nRound 34: getExecCommand non-string args:');
 
   if (test('getExecCommand with args=0 produces command without extra args', () => {
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      process.env.CLAUDE_PACKAGE_MANAGER = 'npm';
+      process.env.ANTIGRAVITY_PACKAGE_MANAGER = 'npm';
       const cmd = pm.getExecCommand('prettier', 0);
       // 0 is falsy, so ternary `args ? ' ' + args : ''` yields ''
       assert.ok(!cmd.includes(' 0'), 'Should not append 0 as args');
       assert.ok(cmd.includes('prettier'), 'Should include binary name');
     } finally {
-      if (originalEnv !== undefined) process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
-      else delete process.env.CLAUDE_PACKAGE_MANAGER;
+      if (originalEnv !== undefined) process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
+      else delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     }
   })) passed++;
   else failed++;
 
   if (test('getExecCommand with args=false produces command without extra args', () => {
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      process.env.CLAUDE_PACKAGE_MANAGER = 'npm';
+      process.env.ANTIGRAVITY_PACKAGE_MANAGER = 'npm';
       const cmd = pm.getExecCommand('eslint', false);
       assert.ok(!cmd.includes('false'), 'Should not append false as args');
       assert.ok(cmd.includes('eslint'), 'Should include binary name');
     } finally {
-      if (originalEnv !== undefined) process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
-      else delete process.env.CLAUDE_PACKAGE_MANAGER;
+      if (originalEnv !== undefined) process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
+      else delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     }
   })) passed++;
   else failed++;
 
   if (test('getExecCommand with args=null produces command without extra args', () => {
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      process.env.CLAUDE_PACKAGE_MANAGER = 'npm';
+      process.env.ANTIGRAVITY_PACKAGE_MANAGER = 'npm';
       const cmd = pm.getExecCommand('tsc', null);
       assert.ok(!cmd.includes('null'), 'Should not append null as args');
       assert.ok(cmd.includes('tsc'), 'Should include binary name');
     } finally {
-      if (originalEnv !== undefined) process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
-      else delete process.env.CLAUDE_PACKAGE_MANAGER;
+      if (originalEnv !== undefined) process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
+      else delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     }
   })) passed++;
   else failed++;
@@ -1274,17 +1274,17 @@ function runTests() {
 
     const origHome = process.env.HOME;
     const origUserProfile = process.env.USERPROFILE;
-    const origPM = process.env.CLAUDE_PACKAGE_MANAGER;
+    const origPM = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
 
     try {
       // Create corrupted global config file
-      const claudeDir = path.join(tmpDir, '.claude');
-      fs.mkdirSync(claudeDir, { recursive: true });
-      fs.writeFileSync(path.join(claudeDir, 'package-manager.json'), '{ invalid json !!!', 'utf8');
+      const antigravityDir = path.join(tmpDir, '.antigravity');
+      fs.mkdirSync(antigravityDir, { recursive: true });
+      fs.writeFileSync(path.join(antigravityDir, 'package-manager.json'), '{ invalid json !!!', 'utf8');
 
       process.env.HOME = tmpDir;
       process.env.USERPROFILE = tmpDir;
-      delete process.env.CLAUDE_PACKAGE_MANAGER;
+      delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
 
       // Re-require to pick up new HOME
       delete require.cache[require.resolve('../../scripts/lib/package-manager')];
@@ -1298,7 +1298,7 @@ function runTests() {
     } finally {
       process.env.HOME = origHome;
       process.env.USERPROFILE = origUserProfile;
-      if (origPM !== undefined) process.env.CLAUDE_PACKAGE_MANAGER = origPM;
+      if (origPM !== undefined) process.env.ANTIGRAVITY_PACKAGE_MANAGER = origPM;
 
       delete require.cache[require.resolve('../../scripts/lib/package-manager')];
       delete require.cache[require.resolve('../../scripts/lib/utils')];
@@ -1317,17 +1317,17 @@ function runTests() {
 
     const origHome = process.env.HOME;
     const origUserProfile = process.env.USERPROFILE;
-    const origPM = process.env.CLAUDE_PACKAGE_MANAGER;
+    const origPM = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
 
     try {
       // Create valid global config with pnpm preference
-      const claudeDir = path.join(tmpDir, '.claude');
-      fs.mkdirSync(claudeDir, { recursive: true });
-      fs.writeFileSync(path.join(claudeDir, 'package-manager.json'), JSON.stringify({ packageManager: 'pnpm', setAt: '2026-01-01T00:00:00Z' }), 'utf8');
+      const antigravityDir = path.join(tmpDir, '.antigravity');
+      fs.mkdirSync(antigravityDir, { recursive: true });
+      fs.writeFileSync(path.join(antigravityDir, 'package-manager.json'), JSON.stringify({ packageManager: 'pnpm', setAt: '2026-01-01T00:00:00Z' }), 'utf8');
 
       process.env.HOME = tmpDir;
       process.env.USERPROFILE = tmpDir;
-      delete process.env.CLAUDE_PACKAGE_MANAGER;
+      delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
 
       // Re-require to pick up new HOME
       delete require.cache[require.resolve('../../scripts/lib/package-manager')];
@@ -1343,7 +1343,7 @@ function runTests() {
     } finally {
       process.env.HOME = origHome;
       process.env.USERPROFILE = origUserProfile;
-      if (origPM !== undefined) process.env.CLAUDE_PACKAGE_MANAGER = origPM;
+      if (origPM !== undefined) process.env.ANTIGRAVITY_PACKAGE_MANAGER = origPM;
 
       delete require.cache[require.resolve('../../scripts/lib/package-manager')];
       delete require.cache[require.resolve('../../scripts/lib/utils')];
@@ -1361,8 +1361,8 @@ function runTests() {
       return;
     }
     const isoHome = path.join(os.tmpdir(), `ecc-pm-r71-${Date.now()}`);
-    const claudeDir = path.join(isoHome, '.claude');
-    fs.mkdirSync(claudeDir, { recursive: true });
+    const antigravityDir = path.join(isoHome, '.antigravity');
+    fs.mkdirSync(antigravityDir, { recursive: true });
     const savedHome = process.env.HOME;
     const savedProfile = process.env.USERPROFILE;
     try {
@@ -1371,14 +1371,14 @@ function runTests() {
       delete require.cache[require.resolve('../../scripts/lib/package-manager')];
       delete require.cache[require.resolve('../../scripts/lib/utils')];
       const freshPm = require('../../scripts/lib/package-manager');
-      // Make .claude directory read-only — can't create new files (package-manager.json)
-      fs.chmodSync(claudeDir, 0o555);
+      // Make .antigravity directory read-only — can't create new files (package-manager.json)
+      fs.chmodSync(antigravityDir, 0o555);
       assert.throws(() => {
         freshPm.setPreferredPackageManager('npm');
       }, /Failed to save package manager preference/);
     } finally {
       try {
-        fs.chmodSync(claudeDir, 0o755);
+        fs.chmodSync(antigravityDir, 0o755);
       } catch (_err) {
         /* best-effort */
       }
@@ -1400,16 +1400,16 @@ function runTests() {
       return;
     }
     const isoProject = path.join(os.tmpdir(), `ecc-pm-proj-r72-${Date.now()}`);
-    const claudeDir = path.join(isoProject, '.claude');
-    fs.mkdirSync(claudeDir, { recursive: true });
-    // Make .claude directory read-only — can't create new files
-    fs.chmodSync(claudeDir, 0o555);
+    const antigravityDir = path.join(isoProject, '.antigravity');
+    fs.mkdirSync(antigravityDir, { recursive: true });
+    // Make .antigravity directory read-only — can't create new files
+    fs.chmodSync(antigravityDir, 0o555);
     try {
       assert.throws(() => {
         pm.setProjectPackageManager('npm', isoProject);
       }, /Failed to save package manager config/);
     } finally {
-      fs.chmodSync(claudeDir, 0o755);
+      fs.chmodSync(antigravityDir, 0o755);
       fs.rmSync(isoProject, { recursive: true, force: true });
     }
   })) passed++;
@@ -1419,9 +1419,9 @@ function runTests() {
   console.log('\nRound 80: getExecCommand (truthy non-string args):');
 
   if (test('getExecCommand with args=42 (truthy number) appends stringified value', () => {
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      process.env.CLAUDE_PACKAGE_MANAGER = 'npm';
+      process.env.ANTIGRAVITY_PACKAGE_MANAGER = 'npm';
       // args=42: truthy, so typeof check at line 334 short-circuits
       // (typeof 42 !== 'string'), skipping validation. Line 339:
       // 42 ? ' ' + 42 -> ' 42' -> appended.
@@ -1429,8 +1429,8 @@ function runTests() {
       assert.ok(cmd.includes('prettier'), 'Should include binary name');
       assert.ok(cmd.includes('42'), 'Truthy number should be stringified and appended');
     } finally {
-      if (originalEnv !== undefined) process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
-      else delete process.env.CLAUDE_PACKAGE_MANAGER;
+      if (originalEnv !== undefined) process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
+      else delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     }
   })) passed++;
   else failed++;
@@ -1524,24 +1524,24 @@ function runTests() {
   })) passed++;
   else failed++;
 
-  // ── Round 94: getPackageManager with empty string CLAUDE_PACKAGE_MANAGER ──
-  console.log('\nRound 94: getPackageManager (empty string CLAUDE_PACKAGE_MANAGER env var):');
+  // ── Round 94: getPackageManager with empty string ANTIGRAVITY_PACKAGE_MANAGER ──
+  console.log('\nRound 94: getPackageManager (empty string ANTIGRAVITY_PACKAGE_MANAGER env var):');
 
-  if (test('getPackageManager skips empty string CLAUDE_PACKAGE_MANAGER (falsy short-circuit)', () => {
+  if (test('getPackageManager skips empty string ANTIGRAVITY_PACKAGE_MANAGER (falsy short-circuit)', () => {
     // package-manager.js line 168: if (envPm && PACKAGE_MANAGERS[envPm])\
     // Empty string '' is falsy — the && short-circuits before checking PACKAGE_MANAGERS.\
     // This is distinct from the 'totally-fake-pm' test (truthy but unknown PM).
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      process.env.CLAUDE_PACKAGE_MANAGER = '';
+      process.env.ANTIGRAVITY_PACKAGE_MANAGER = '';
       const result = pm.getPackageManager();
       assert.notStrictEqual(result.source, 'environment', 'Empty string env var should NOT be treated as environment source');
       assert.ok(result.name, 'Should still return a valid package manager name');
     } finally {
       if (originalEnv !== undefined) {
-        process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
+        process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
       } else {
-        delete process.env.CLAUDE_PACKAGE_MANAGER;
+        delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
       }
     }
   })) passed++;
@@ -1588,9 +1588,9 @@ function runTests() {
   console.log('\nRound 109: getExecCommand (path traversal in binary — SAFE_NAME_REGEX permits ../ in binary name):');
 
   if (test('getExecCommand accepts ../../../etc/passwd as binary because SAFE_NAME_REGEX allows ../', () => {
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      process.env.CLAUDE_PACKAGE_MANAGER = 'npm';
+      process.env.ANTIGRAVITY_PACKAGE_MANAGER = 'npm';
       // SAFE_NAME_REGEX = /^[@a-zA-Z0-9_.\\/-\\\\]+$/ individually allows . and /\
       const cmd = pm.getExecCommand('../../../etc/passwd');
       assert.strictEqual(cmd, 'npx ../../../etc/passwd', 'Path traversal in binary passes SAFE_NAME_REGEX because . and / are individually allowed');
@@ -1599,9 +1599,9 @@ function runTests() {
       assert.strictEqual(cmd2, 'npx @scope/../../evil', 'Scoped path traversal also passes the regex');
     } finally {
       if (originalEnv !== undefined) {
-        process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
+        process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
       } else {
-        delete process.env.CLAUDE_PACKAGE_MANAGER;
+        delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
       }
     }
   })) passed++;
@@ -1611,9 +1611,9 @@ function runTests() {
   console.log('\nRound 108: getRunCommand (path traversal — SAFE_NAME_REGEX permits ../ via allowed / and . chars):');
 
   if (test('getRunCommand accepts @scope/../../evil because SAFE_NAME_REGEX allows ../', () => {
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      process.env.CLAUDE_PACKAGE_MANAGER = 'npm';
+      process.env.ANTIGRAVITY_PACKAGE_MANAGER = 'npm';
       // SAFE_NAME_REGEX = /^[@a-zA-Z0-9_.\\/-\\\\]+$/ allows each char individually,\
       // so '../' passes despite being a path traversal sequence
       const cmd = pm.getRunCommand('@scope/../../evil');
@@ -1623,9 +1623,9 @@ function runTests() {
       assert.strictEqual(cmd2, 'npm run ../../../etc/passwd', 'Bare ../ traversal also passes the regex');
     } finally {
       if (originalEnv !== undefined) {
-        process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
+        process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
       } else {
-        delete process.env.CLAUDE_PACKAGE_MANAGER;
+        delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
       }
     }
   })) passed++;
@@ -1637,9 +1637,9 @@ function runTests() {
   if (test('getExecCommand accepts newline in args because SAFE_ARGS_REGEX includes newline', () => {
     // SAFE_ARGS_REGEX = /^[@a-zA-Z0-9\\s_.\\/:=,'\"*+-\\]+$/
     // \\s matches whitespace including newline
-    const originalEnv = process.env.CLAUDE_PACKAGE_MANAGER;
+    const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     try {
-      process.env.CLAUDE_PACKAGE_MANAGER = 'npm';
+      process.env.ANTIGRAVITY_PACKAGE_MANAGER = 'npm';
       // Newline in args should pass SAFE_ARGS_REGEX because \\s matches newline
       const cmd = pm.getExecCommand('prettier', 'file.js\necho injected');
       assert.strictEqual(cmd, 'npx prettier file.js\necho injected', 'Newline passes SAFE_ARGS_REGEX');
@@ -1650,8 +1650,8 @@ function runTests() {
       const cmd3 = pm.getExecCommand('tsc', 'src\r--strict');
       assert.strictEqual(cmd3, 'npx tsc src\r--strict', 'Carriage return passes via \\s');
     } finally {
-      if (originalEnv !== undefined) process.env.CLAUDE_PACKAGE_MANAGER = originalEnv;
-      else delete process.env.CLAUDE_PACKAGE_MANAGER;
+      if (originalEnv !== undefined) process.env.ANTIGRAVITY_PACKAGE_MANAGER = originalEnv;
+      else delete process.env.ANTIGRAVITY_PACKAGE_MANAGER;
     }
   })) passed++;
   else failed++;

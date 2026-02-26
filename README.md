@@ -9,7 +9,84 @@ Production-ready **workflows, skills, and rules** for software development, adap
 
 ---
 
-## What's Inside
+## 🚀 Quick Start
+
+### Option 1: Install Script (Recommended)
+
+```bash
+# Clone this repo
+git clone https://github.com/YOUR_USERNAME/ecc-antigravity.git
+cd ecc-antigravity
+
+# Install to your project (installs workflows + skills + rules)
+./install.sh /path/to/your/project python
+./install.sh /path/to/your/project typescript python    # Install multiple languages
+./install.sh /path/to/your/project all                  # Install all available languages
+
+# Get help
+./install.sh --help
+```
+
+The installer copies:
+- `workflows/` → `<project>/.agent/workflows/`
+- `skills/` → `<project>/.agent/skills/`
+- `rules/common/` + language rules → `<project>/.agent/rules/`
+
+### Option 2: Manual Installation
+
+```bash
+# Clone this repo
+git clone https://github.com/YOUR_USERNAME/ecc-antigravity.git
+
+# Copy to your project manually
+mkdir -p YOUR_PROJECT/.agent
+cp -r ecc-antigravity/workflows/YOUR_PROJECT/.agent/workflows/
+cp -r ecc-antigravity/skills/YOUR_PROJECT/.agent/skills/
+cp -r ecc-antigravity/rules/common/YOUR_PROJECT/.agent/rules/common/
+cp -r ecc-antigravity/rules/python/YOUR_PROJECT/.agent/rules/python/
+# ... pick your stack
+```
+
+✨ **That's it!** You now have access to 9 workflows, 50 skills, and 24 rules.
+
+---
+
+## 🌐 Cross-Platform Support
+
+**Windows, macOS, and Linux** are all officially. All scripts have been written in Node.js for maximum compatibility.
+
+### Package Manager Detection
+
+The plugin automatically detects your preferred package manager (npm, pnpm, yarn, or bun) with the following priority:
+
+1. **Environment variable**: `ANTIGRAVITY_PACKAGE_MANAGER`
+2. **Project config**: `.antigravity/package-manager.json`
+3. **package.json**: `packageManager` field
+4. **Lock file**: Detection from package-lock.json, yarn.lock, pnpm-lock.yaml, or bun.lockb
+5. **Global config**: `~/.antigravity/package-manager.json`
+6. **Fallback**: First available package manager
+
+To set your preferred package manager:
+
+```bash
+# Via environment variable
+export ANTIGRAVITY_PACKAGE_MANAGER=pnpm
+
+# Via global config
+node scripts/setup-package-manager.js --global pnpm
+
+# Via project config
+node scripts/setup-package-manager.js --project bun
+
+# Detect current setting
+node scripts/setup-package-manager.js --detect
+```
+
+Or use the `/setup-pm` workflow in Antigravity.
+
+---
+
+## 📦 What's Inside
 
 ```
 ecc-antigravity/
@@ -41,59 +118,10 @@ ecc-antigravity/
 │   ├── python/              # Python specific
 │   └── swift/               # Swift specific
 │
-├── agents/               # Agent role definitions
-│   ├── architect.md         # System design
-│   ├── code-reviewer.md     # Code review
-│   ├── database-reviewer.md # Database review
-│   ├── e2e-runner.md        # E2E testing
-│   └── ...
-│
-├── commands/             # Additional command definitions
-│   ├── learn.md             # Pattern extraction
-│   ├── skill-create.md      # Skill generation
-│   ├── e2e.md               # E2E test generation
-│   └── ...
-│
 └── examples/             # Example configurations
     ├── CLAUDE.md                # Example project config
     ├── saas-nextjs-CLAUDE.md    # Real-world SaaS
     └── django-api-CLAUDE.md     # Real-world Django API
-```
-
----
-
-## Quick Start
-
-### Option 1: Install Script (Recommended)
-
-```bash
-# Clone this repo
-git clone https://github.com/YOUR_USERNAME/ecc-antigravity.git
-cd ecc-antigravity
-
-# Install to your project (installs workflows + skills + rules)
-./install.sh /path/to/your/project python
-./install.sh /path/to/your/project typescript python
-```
-
-The installer copies:
-- `workflows/` → `<project>/.agent/workflows/`
-- `skills/` → `<project>/.agent/skills/`
-- `rules/common/` + language rules → `<project>/.agent/rules/`
-
-### Option 2: Manual Installation
-
-```bash
-# Clone this repo
-git clone https://github.com/YOUR_USERNAME/ecc-antigravity.git
-
-# Copy to your project manually
-mkdir -p YOUR_PROJECT/.agent
-cp -r ecc-antigravity/workflows/ YOUR_PROJECT/.agent/workflows/
-cp -r ecc-antigravity/skills/ YOUR_PROJECT/.agent/skills/
-cp -r ecc-antigravity/rules/common/ YOUR_PROJECT/.agent/rules/common/
-cp -r ecc-antigravity/rules/python/ YOUR_PROJECT/.agent/rules/python/
-# ... pick your stack
 ```
 
 ---

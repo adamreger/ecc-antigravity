@@ -7,7 +7,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { commandExists, getClaudeDir, readFile, writeFile } = require('./utils');
+const { commandExists, getAntigravityDir, readFile, writeFile } = require('./utils');
 
 // Package manager definitions
 const PACKAGE_MANAGERS = {
@@ -58,7 +58,7 @@ const DETECTION_PRIORITY = ['pnpm', 'bun', 'yarn', 'npm'];
 
 // Config file path
 function getConfigPath() {
-  return path.join(getClaudeDir(), 'package-manager.json');
+  return path.join(getAntigravityDir(), 'package-manager.json');
 }
 
 /**
@@ -149,11 +149,11 @@ function getAvailablePackageManagers() {
  * Get the package manager to use for current project
  *
  * Detection priority:
- * 1. Environment variable CLAUDE_PACKAGE_MANAGER
- * 2. Project-specific config (in .claude/package-manager.json)
+ * 1. Environment variable ANTIGRAVITY_PACKAGE_MANAGER
+ * 2. Project-specific config (in .antigravity/package-manager.json)
  * 3. package.json packageManager field
  * 4. Lock file detection
- * 5. Global user preference (in ~/.claude/package-manager.json)
+ * 5. Global user preference (in ~/.antigravity/package-manager.json)
  * 6. Default to npm (no child processes spawned)
  *
  * @param {object} options - Options
@@ -164,7 +164,7 @@ function getPackageManager(options = {}) {
   const { projectDir = process.cwd() } = options;
 
   // 1. Check environment variable
-  const envPm = process.env.CLAUDE_PACKAGE_MANAGER;
+  const envPm = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
   if (envPm && PACKAGE_MANAGERS[envPm]) {
     return {
       name: envPm,
@@ -174,7 +174,7 @@ function getPackageManager(options = {}) {
   }
 
   // 2. Check project-specific config
-  const projectConfigPath = path.join(projectDir, '.claude', 'package-manager.json');
+  const projectConfigPath = path.join(projectDir, '.antigravity', 'package-manager.json');
   const projectConfig = readFile(projectConfigPath);
   if (projectConfig) {
     try {
@@ -264,7 +264,7 @@ function setProjectPackageManager(pmName, projectDir = process.cwd()) {
     throw new Error(`Unknown package manager: ${pmName}`);
   }
 
-  const configDir = path.join(projectDir, '.claude');
+  const configDir = path.join(projectDir, '.antigravity');
   const configPath = path.join(configDir, 'package-manager.json');
 
   const config = {
@@ -341,7 +341,7 @@ function getExecCommand(binary, args = '', options = {}) {
 
 /**
  * Interactive prompt for package manager selection
- * Returns a message for Claude to show to user
+ * Returns a message for Antigravity to show to user
  *
  * NOTE: Does NOT spawn child processes to check availability.
  * Lists all supported PMs and shows how to configure preference.
@@ -350,8 +350,8 @@ function getSelectionPrompt() {
   let message = '[PackageManager] No package manager preference detected.\n';
   message += 'Supported package managers: ' + Object.keys(PACKAGE_MANAGERS).join(', ') + '\n';
   message += '\nTo set your preferred package manager:\n';
-  message += '  - Global: Set CLAUDE_PACKAGE_MANAGER environment variable\n';
-  message += '  - Or add to ~/.claude/package-manager.json: {"packageManager": "pnpm"}\n';
+  message += '  - Global: Set ANTIGRAVITY_PACKAGE_MANAGER environment variable\n';
+  message += '  - Or add to ~/.antigravity/package-manager.json: {"packageManager": "pnpm"}\n';
   message += '  - Or add to package.json: {"packageManager": "pnpm@8"}\n';
   message += '  - Or add a lock file to your project (e.g., pnpm-lock.yaml)\n';
 

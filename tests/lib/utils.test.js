@@ -57,17 +57,17 @@ function runTests() {
     assert.ok(fs.existsSync(home), 'Home dir should exist');
   })) passed++; else failed++;
 
-  if (test('getClaudeDir returns path under home', () => {
-    const claudeDir = utils.getClaudeDir();
+  if (test('getAntigravityDir returns path under home', () => {
+    const antigravityDir = utils.getAntigravityDir();
     const homeDir = utils.getHomeDir();
-    assert.ok(claudeDir.startsWith(homeDir), 'Claude dir should be under home');
-    assert.ok(claudeDir.includes('.claude'), 'Should contain .claude');
+    assert.ok(antigravityDir.startsWith(homeDir), 'Antigravity dir should be under home');
+    assert.ok(antigravityDir.includes('.antigravity'), 'Should contain .antigravity');
   })) passed++; else failed++;
 
-  if (test('getSessionsDir returns path under Claude dir', () => {
+  if (test('getSessionsDir returns path under Antigravity dir', () => {
     const sessionsDir = utils.getSessionsDir();
-    const claudeDir = utils.getClaudeDir();
-    assert.ok(sessionsDir.startsWith(claudeDir), 'Sessions should be under Claude dir');
+    const antigravityDir = utils.getAntigravityDir();
+    assert.ok(sessionsDir.startsWith(antigravityDir), 'Sessions should be under Antigravity dir');
     assert.ok(sessionsDir.includes('sessions'), 'Should contain sessions');
   })) passed++; else failed++;
 
@@ -122,35 +122,35 @@ function runTests() {
   console.log('\nSession ID Functions:');
 
   if (test('getSessionIdShort falls back to project name', () => {
-    const original = process.env.CLAUDE_SESSION_ID;
-    delete process.env.CLAUDE_SESSION_ID;
+    const original = process.env.ANTIGRAVITY_SESSION_ID;
+    delete process.env.ANTIGRAVITY_SESSION_ID;
     try {
       const shortId = utils.getSessionIdShort();
       assert.strictEqual(shortId, utils.getProjectName());
     } finally {
-      if (original) process.env.CLAUDE_SESSION_ID = original;
+      if (original) process.env.ANTIGRAVITY_SESSION_ID = original;
     }
   })) passed++; else failed++;
 
   if (test('getSessionIdShort returns last 8 characters', () => {
-    const original = process.env.CLAUDE_SESSION_ID;
-    process.env.CLAUDE_SESSION_ID = 'test-session-abc12345';
+    const original = process.env.ANTIGRAVITY_SESSION_ID;
+    process.env.ANTIGRAVITY_SESSION_ID = 'test-session-abc12345';
     try {
       assert.strictEqual(utils.getSessionIdShort(), 'abc12345');
     } finally {
-      if (original) process.env.CLAUDE_SESSION_ID = original;
-      else delete process.env.CLAUDE_SESSION_ID;
+      if (original) process.env.ANTIGRAVITY_SESSION_ID = original;
+      else delete process.env.ANTIGRAVITY_SESSION_ID;
     }
   })) passed++; else failed++;
 
   if (test('getSessionIdShort handles short session IDs', () => {
-    const original = process.env.CLAUDE_SESSION_ID;
-    process.env.CLAUDE_SESSION_ID = 'short';
+    const original = process.env.ANTIGRAVITY_SESSION_ID;
+    process.env.ANTIGRAVITY_SESSION_ID = 'short';
     try {
       assert.strictEqual(utils.getSessionIdShort(), 'short');
     } finally {
-      if (original) process.env.CLAUDE_SESSION_ID = original;
-      else delete process.env.CLAUDE_SESSION_ID;
+      if (original) process.env.ANTIGRAVITY_SESSION_ID = original;
+      else delete process.env.ANTIGRAVITY_SESSION_ID;
     }
   })) passed++; else failed++;
 
@@ -498,9 +498,9 @@ function runTests() {
   // getLearnedSkillsDir() test
   console.log('\ngetLearnedSkillsDir():');
 
-  if (test('getLearnedSkillsDir returns path under Claude dir', () => {
+  if (test('getLearnedSkillsDir returns path under Antigravity dir', () => {
     const dir = utils.getLearnedSkillsDir();
-    assert.ok(dir.includes('.claude'));
+    assert.ok(dir.includes('.antigravity'));
     assert.ok(dir.includes('skills'));
     assert.ok(dir.includes('learned'));
   })) passed++; else failed++;
@@ -1178,7 +1178,7 @@ function runTests() {
       console.log('    (skipped — root CWD differs on Windows)');
       return;
     }
-    // Spawn a subprocess at CWD=/ with CLAUDE_SESSION_ID empty.
+    // Spawn a subprocess at CWD=/ with ANTIGRAVITY_SESSION_ID empty.
     // At /, git rev-parse --show-toplevel fails → getGitRepoName() = null.
     // path.basename('/') = '' → '' || null = null → getProjectName() = null.
     // So getSessionIdShort('my-custom-fallback') = null || 'my-custom-fallback'.
@@ -1191,7 +1191,7 @@ function runTests() {
     const result = spawnSync('node', ['-e', script], {
       encoding: 'utf8',
       cwd: '/',
-      env: { ...process.env, CLAUDE_SESSION_ID: '' },
+      env: { ...process.env, ANTIGRAVITY_SESSION_ID: '' },
       timeout: 10000
     });
     assert.strictEqual(result.status, 0, `Should exit 0, got status ${result.status}. stderr: ${result.stderr}`);
@@ -1305,15 +1305,15 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 97: getSessionIdShort with whitespace-only CLAUDE_SESSION_ID ──
+  // ── Round 97: getSessionIdShort with whitespace-only ANTIGRAVITY_SESSION_ID ──
   console.log('\nRound 97: getSessionIdShort (whitespace-only session ID):');
 
-  if (test('getSessionIdShort returns whitespace when CLAUDE_SESSION_ID is all spaces', () => {
+  if (test('getSessionIdShort returns whitespace when ANTIGRAVITY_SESSION_ID is all spaces', () => {
     // utils.js line 116: if (sessionId && sessionId.length > 0) — '   ' is truthy
     // and has length > 0, so it passes the check instead of falling back.
-    const original = process.env.CLAUDE_SESSION_ID;
+    const original = process.env.ANTIGRAVITY_SESSION_ID;
     try {
-      process.env.CLAUDE_SESSION_ID = '          ';  // 10 spaces
+      process.env.ANTIGRAVITY_SESSION_ID = '          ';  // 10 spaces
       const result = utils.getSessionIdShort('fallback');
       // slice(-8) on 10 spaces returns 8 spaces — not the expected fallback
       assert.strictEqual(result, '        ',
@@ -1322,9 +1322,9 @@ function runTests() {
         'Result should be entirely whitespace (demonstrating the missing trim)');
     } finally {
       if (original !== undefined) {
-        process.env.CLAUDE_SESSION_ID = original;
+        process.env.ANTIGRAVITY_SESSION_ID = original;
       } else {
-        delete process.env.CLAUDE_SESSION_ID;
+        delete process.env.ANTIGRAVITY_SESSION_ID;
       }
     }
   })) passed++; else failed++;

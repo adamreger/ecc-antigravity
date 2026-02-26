@@ -48,6 +48,8 @@ Invoke these with the corresponding slash command:
 
 ## Development Notes
 
+- Package manager detection: npm, pnpm, yarn, bun (configurable via `ANTIGRAVITY_PACKAGE_MANAGER` env var or project config)
+- Cross-platform: Windows, macOS, Linux support via Node.js scripts
 - Workflow format: Markdown with YAML frontmatter (`description`)
 - Skill format: `SKILL.md` with clear sections (When to Use, How It Works, Examples)
 - Rule format: Markdown guidelines organized by language (`common/`, `typescript/`, `python/`, `swift/`)
