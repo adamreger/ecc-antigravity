@@ -1,51 +1,52 @@
-# ⚠️ ATTENTION ⚠️
+# 🚧 Work in Progress
 
-This file **HAS NOT BEEN UPDATED** from the forked repo. I'll update it as I go.
+> [!NOTE]
+> This contributing guide is actively being updated. Some sections may be incomplete.
+> Feel free to [open an issue](https://github.com/adamreger/ecc-antigravity/issues) if anything is unclear.
 
 # Contributing to ECC-Antigravity
 
-Thanks for wanting to contribute! This repo is a community resource for Antigravity users.
+Thanks for wanting to contribute! This repo is a community resource for Antigravity IDE users.
 
 ## Table of Contents
 
 - [What We're Looking For](#what-were-looking-for)
 - [Quick Start](#quick-start)
+- [Contributing Workflows](#contributing-workflows)
 - [Contributing Skills](#contributing-skills)
-- [Contributing Agents](#contributing-agents)
-- [Contributing Hooks](#contributing-hooks)
-- [Contributing Commands](#contributing-commands)
+- [Contributing Rules](#contributing-rules)
 - [Pull Request Process](#pull-request-process)
 
 ---
 
 ## What We're Looking For
 
-### Agents
-New agents that handle specific tasks well:
-- Language-specific reviewers (Python, Go, Rust)
-- Framework experts (Django, Rails, Laravel, Spring)
-- DevOps specialists (Kubernetes, Terraform, CI/CD)
-- Domain experts (ML pipelines, data engineering, mobile)
+### Workflows
+
+New or improved workflow definitions for Antigravity:
+
+- Language-specific review pipelines (Python, Go, Rust, etc.)
+- Framework-specific flows (Django, Rails, React, Next.js)
+- DevOps automation (Kubernetes, Terraform, CI/CD)
+- Specialized workflows (ML pipelines, data engineering, mobile)
 
 ### Skills
-Workflow definitions and domain knowledge:
+
+Domain knowledge and patterns:
+
 - Language best practices
 - Framework patterns
 - Testing strategies
 - Architecture guides
 
-### Hooks
-Useful automations:
-- Linting/formatting hooks
-- Security checks
-- Validation hooks
-- Notification hooks
+### Rules
 
-### Commands
-Slash commands that invoke useful workflows:
-- Deployment commands
-- Testing commands
-- Code generation commands
+Always-follow guidelines organized by language:
+
+- **`common/`** — Language-agnostic (coding style, git, testing, security)
+- **`typescript/`** — TypeScript/JavaScript specific
+- **`python/`** — Python specific
+- **`swift/`** — Swift specific
 
 ---
 
@@ -53,17 +54,16 @@ Slash commands that invoke useful workflows:
 
 ```bash
 # 1. Fork and clone
-gh repo fork affaan-m/everything-claude-code --clone
-cd everything-claude-code
+gh repo fork adamreger/ecc-antigravity --clone
+cd ecc-antigravity
 
 # 2. Create a branch
 git checkout -b feat/my-contribution
 
 # 3. Add your contribution (see sections below)
 
-# 4. Test locally
-cp -r skills/my-skill ~/.claude/skills/  # for skills
-# Then test with Claude Code
+# 4. Test locally — install to a test project
+./install.sh /path/to/test/project python
 
 # 5. Submit PR
 git add . && git commit -m "feat: add my-skill" && git push
@@ -71,9 +71,66 @@ git add . && git commit -m "feat: add my-skill" && git push
 
 ---
 
+## Contributing Workflows
+
+Workflows are step-by-step instructions invoked via `/workflow-name` in Antigravity.
+
+### File Location
+
+```
+workflows/your-workflow.md
+```
+
+### Workflow Template
+
+```markdown
+---
+description: Brief description of what this workflow does
+---
+
+# Workflow Name
+
+## Purpose
+
+What this workflow accomplishes.
+
+## Steps
+
+1. First step — what Antigravity should do
+2. Second step — validation or execution
+3. Final step — output and verification
+
+## Output
+
+What the user receives when the workflow completes.
+```
+
+### Workflow Checklist
+
+- [ ] Uses YAML frontmatter with `description`
+- [ ] Steps are clear and actionable
+- [ ] Tested with Antigravity IDE
+- [ ] Follows naming convention: lowercase with hyphens (`my-workflow.md`)
+
+### Existing Workflows
+
+| Workflow | Slash Command | Description |
+|----------|--------------|-------------|
+| Plan | `/plan` | Implementation planning |
+| TDD | `/tdd` | Test-driven development |
+| Code Review | `/code-review` | Quality & security review |
+| Build Fix | `/build-fix` | Fix build/type errors |
+| Security Review | `/security-review` | Security audit |
+| Verify | `/verify` | Comprehensive verification |
+| Refactor Clean | `/refactor-clean` | Dead code cleanup |
+| Python Review | `/python-review` | Python code review |
+| Orchestrate | `/orchestrate` | Chain workflows |
+
+---
+
 ## Contributing Skills
 
-Skills are knowledge modules that Claude Code loads based on context.
+Skills are knowledge modules that Antigravity uses for context-aware assistance.
 
 ### Directory Structure
 
@@ -89,7 +146,6 @@ skills/
 ---
 name: your-skill-name
 description: Brief description shown in skill list
-origin: ECC
 ---
 
 # Your Skill Title
@@ -126,229 +182,49 @@ Describe scenarios where this skill applies.
 - [ ] Includes practical code examples
 - [ ] Under 500 lines
 - [ ] Uses clear section headers
-- [ ] Tested with Claude Code
+- [ ] Tested with Antigravity IDE
 
 ### Example Skills
 
 | Skill | Purpose |
 |-------|---------|
-| `coding-standards/` | TypeScript/JavaScript patterns |
-| `frontend-patterns/` | React and Next.js best practices |
+| `coding-standards/` | Universal best practices |
+| `frontend-patterns/` | React and Next.js patterns |
 | `backend-patterns/` | API and database patterns |
 | `security-review/` | Security checklist |
+| `python-patterns/` | Python idioms |
 
 ---
 
-## Contributing Agents
+## Contributing Rules
 
-Agents are specialized assistants invoked via the Task tool.
+Rules are always-follow guidelines installed to `.antigravity/rules/` in target projects.
 
-### File Location
-
-```
-agents/your-agent-name.md
-```
-
-### Agent Template
-
-```markdown
----
-name: your-agent-name
-description: What this agent does and when Claude should invoke it. Be specific!
-tools: ["Read", "Write", "Edit", "Bash", "Grep", "Glob"]
-model: sonnet
----
-
-You are a [role] specialist.
-
-## Your Role
-
-- Primary responsibility
-- Secondary responsibility
-- What you DO NOT do (boundaries)
-
-## Workflow
-
-### Step 1: Understand
-How you approach the task.
-
-### Step 2: Execute
-How you perform the work.
-
-### Step 3: Verify
-How you validate results.
-
-## Output Format
-
-What you return to the user.
-
-## Examples
-
-### Example: [Scenario]
-Input: [what user provides]
-Action: [what you do]
-Output: [what you return]
-```
-
-### Agent Fields
-
-| Field | Description | Options |
-|-------|-------------|---------|
-| `name` | Lowercase, hyphenated | `code-reviewer` |
-| `description` | Used to decide when to invoke | Be specific! |
-| `tools` | Only what's needed | `Read, Write, Edit, Bash, Grep, Glob, WebFetch, Task` |
-| `model` | Complexity level | `haiku` (simple), `sonnet` (coding), `opus` (complex) |
-
-### Example Agents
-
-| Agent | Purpose |
-|-------|---------|
-| `tdd-guide.md` | Test-driven development |
-| `code-reviewer.md` | Code review |
-| `security-reviewer.md` | Security scanning |
-| `build-error-resolver.md` | Fix build errors |
-
----
-
-## Contributing Hooks
-
-Hooks are automatic behaviors triggered by Claude Code events.
-
-### File Location
+### Directory Structure
 
 ```
-hooks/hooks.json
+rules/
+├── common/          # Language-agnostic rules
+├── typescript/      # TypeScript/JS rules
+├── python/          # Python rules
+└── swift/           # Swift rules
 ```
 
-### Hook Types
+### Rule Format
 
-| Type | Trigger | Use Case |
-|------|---------|----------|
-| `PreToolUse` | Before tool runs | Validate, warn, block |
-| `PostToolUse` | After tool runs | Format, check, notify |
-| `SessionStart` | Session begins | Load context |
-| `Stop` | Session ends | Cleanup, audit |
+Rules are markdown files containing clear, actionable guidelines. Each rule file should:
 
-### Hook Format
+- Focus on a specific concern (e.g., security, testing, coding style)
+- Use imperative language ("Always…", "Never…", "Prefer…")
+- Include brief code examples where helpful
+- Be concise — rules are loaded automatically, so brevity matters
 
-```json
-{
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "tool == \"Bash\" && tool_input.command matches \"rm -rf /\"",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "echo '[Hook] BLOCKED: Dangerous command' && exit 1"
-          }
-        ],
-        "description": "Block dangerous rm commands"
-      }
-    ]
-  }
-}
-```
+### Rule Checklist
 
-### Matcher Syntax
-
-```javascript
-// Match specific tools
-tool == "Bash"
-tool == "Edit"
-tool == "Write"
-
-// Match input patterns
-tool_input.command matches "npm install"
-tool_input.file_path matches "\\.tsx?$"
-
-// Combine conditions
-tool == "Bash" && tool_input.command matches "git push"
-```
-
-### Hook Examples
-
-```json
-// Block dev servers outside tmux
-{
-  "matcher": "tool == \"Bash\" && tool_input.command matches \"npm run dev\"",
-  "hooks": [{"type": "command", "command": "echo 'Use tmux for dev servers' && exit 1"}],
-  "description": "Ensure dev servers run in tmux"
-}
-
-// Auto-format after editing TypeScript
-{
-  "matcher": "tool == \"Edit\" && tool_input.file_path matches \"\\.tsx?$\"",
-  "hooks": [{"type": "command", "command": "npx prettier --write \"$file_path\""}],
-  "description": "Format TypeScript files after edit"
-}
-
-// Warn before git push
-{
-  "matcher": "tool == \"Bash\" && tool_input.command matches \"git push\"",
-  "hooks": [{"type": "command", "command": "echo '[Hook] Review changes before pushing'"}],
-  "description": "Reminder to review before push"
-}
-```
-
-### Hook Checklist
-
-- [ ] Matcher is specific (not overly broad)
-- [ ] Includes clear error/info messages
-- [ ] Uses correct exit codes (`exit 1` blocks, `exit 0` allows)
-- [ ] Tested thoroughly
-- [ ] Has description
-
----
-
-## Contributing Commands
-
-Commands are user-invoked actions with `/command-name`.
-
-### File Location
-
-```
-commands/your-command.md
-```
-
-### Command Template
-
-```markdown
----
-description: Brief description shown in /help
----
-
-# Command Name
-
-## Purpose
-
-What this command does.
-
-## Usage
-
-\`\`\`
-/your-command [args]
-\`\`\`
-
-## Workflow
-
-1. First step
-2. Second step
-3. Final step
-
-## Output
-
-What the user receives.
-```
-
-### Example Commands
-
-| Command | Purpose |
-|---------|---------|
-| `commit.md` | Create git commits |
-| `code-review.md` | Review code changes |
-| `tdd.md` | TDD workflow |
-| `e2e.md` | E2E testing |
+- [ ] Placed in the correct language directory (or `common/` if universal)
+- [ ] Follows lowercase-with-hyphens naming (`my-rule.md`)
+- [ ] Guidelines are actionable and specific
+- [ ] No conflicts with existing rules
 
 ---
 
@@ -357,34 +233,21 @@ What the user receives.
 ### 1. PR Title Format
 
 ```
-feat(skills): add rust-patterns skill
-feat(agents): add api-designer agent
-feat(hooks): add auto-format hook
-fix(skills): update React patterns
+feat(workflows): add rust-review workflow
+feat(skills): add kubernetes-patterns skill
+feat(rules): add go coding standards
+fix(skills): update React patterns for v19
 docs: improve contributing guide
 ```
 
 ### 2. PR Description
 
-```markdown
-## Summary
-What you're adding and why.
+Include:
 
-## Type
-- [ ] Skill
-- [ ] Agent
-- [ ] Hook
-- [ ] Command
-
-## Testing
-How you tested this.
-
-## Checklist
-- [ ] Follows format guidelines
-- [ ] Tested with Claude Code
-- [ ] No sensitive info (API keys, paths)
-- [ ] Clear descriptions
-```
+- **Summary** — What you're adding and why
+- **Type** — Workflow, Skill, or Rule
+- **Testing** — How you tested this with Antigravity IDE
+- **Checklist** — Confirm you've followed the relevant checklist above
 
 ### 3. Review Process
 
@@ -397,13 +260,15 @@ How you tested this.
 ## Guidelines
 
 ### Do
+
 - Keep contributions focused and modular
 - Include clear descriptions
-- Test before submitting
+- Test with Antigravity IDE before submitting
 - Follow existing patterns
 - Document dependencies
 
 ### Don't
+
 - Include sensitive data (API keys, tokens, paths)
 - Add overly complex or niche configs
 - Submit untested contributions
@@ -421,9 +286,8 @@ How you tested this.
 
 ## Questions?
 
-- **Issues:** [github.com/affaan-m/everything-claude-code/issues](https://github.com/affaan-m/everything-claude-code/issues)
-- **X/Twitter:** [@affaanmustafa](https://x.com/affaanmustafa)
+- **Issues:** [github.com/adamreger/ecc-antigravity/issues](https://github.com/adamreger/ecc-antigravity/issues)
 
 ---
 
-Thanks for contributing! Let's build a great resource together.
+Thanks for contributing! Let's build a great resource together. 🚀
