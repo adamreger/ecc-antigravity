@@ -24,15 +24,14 @@ jobs:
         with:
           node-version: ${{ inputs.node-version }}
 
-
-
       - name: Validate workflows
         run: node scripts/ci/validate-workflows.js
-
-
+        continue-on-error: false
 
       - name: Validate skills
         run: node scripts/ci/validate-skills.js
+        continue-on-error: false
 
       - name: Validate rules
         run: node scripts/ci/validate-rules.js
+        continue-on-error: false

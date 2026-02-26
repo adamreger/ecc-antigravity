@@ -110,6 +110,7 @@ jobs:
           case "${{ inputs.package-manager }}" in
             npm) npm ci ;;
             pnpm) pnpm install ;;
+            # --ignore-engines required for Node 18 compat with some devDependencies (e.g., markdownlint-cli)
             yarn) yarn install --ignore-engines ;;
             bun) bun install ;;
             *) echo "Unsupported package manager: ${{ inputs.package-manager }}" && exit 1 ;;
@@ -118,7 +119,7 @@ jobs:
       - name: Run tests
         run: node tests/run-all.js
         env:
-          CLAUDE_CODE_PACKAGE_MANAGER: ${{ inputs.package-manager }}
+          ANTIGRAVITY_PACKAGE_MANAGER: ${{ inputs.package-manager }}
 
       - name: Upload test artifacts
         if: failure()

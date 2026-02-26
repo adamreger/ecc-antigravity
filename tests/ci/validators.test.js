@@ -255,7 +255,7 @@ function runTests() {
 
       // Restore permissions so cleanup works
       fs.chmodSync(filePath, 0o644);
-    } catch (e) {
+    } catch (_e) {
       // If chmod fails (e.g. Windows), skip the test assertion
       console.log('      (Skipping chmod test on this platform)');
     }
@@ -507,7 +507,7 @@ function runTests() {
     // statSync follows symlinks and throws ENOENT, exercising catch block
     try {
       fs.symlinkSync('/nonexistent/target.md', path.join(testDir, 'broken.md'));
-    } catch {
+    } catch (_e) {
       // Skip on systems that don't support symlinks
       console.log('    (skipped — symlinks not supported)');
       cleanupTestDir(testDir);

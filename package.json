@@ -1,13 +1,12 @@
 {
-  "name": "ecc-universal",
-  "version": "1.4.1",
-  "description": "Complete collection of battle-tested Claude Code configs — agents, skills, hooks, commands, and rules evolved over 10+ months of intensive daily use by an Anthropic hackathon winner",
+  "name": "ecc-antigravity",
+  "version": "0.1.0",
+  "description": "Production-ready **workflows, skills, and rules** for software development, adapted from the battle-tested Claude Code configs by an Anthropic hackathon winner.",
   "keywords": [
     "claude-code",
     "ai",
     "agents",
     "skills",
-    "hooks",
     "mcp",
     "rules",
     "claude",
@@ -17,67 +16,48 @@
     "security",
     "automation",
     "best-practices",
-    "cursor",
-    "cursor-ide",
-    "opencode"
+    "antigravity",
+    "antigravity-ide",
+    "google-antigravity",
+    "agentic-ide",
+    "agentic-ai"
   ],
   "author": {
-    "name": "Affaan Mustafa",
-    "url": "https://x.com/affaanmustafa"
+    "name": "Adam Reger",
+    "url": "https://github.com/adamreger"
   },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/affaan-m/everything-claude-code.git"
+    "url": "git+https://github.com/adamreger/ecc-antigravity.git"
   },
-  "homepage": "https://github.com/affaan-m/everything-claude-code#readme",
+  "homepage": "https://github.com/adamreger/ecc-antigravity#readme",
   "bugs": {
-    "url": "https://github.com/affaan-m/everything-claude-code/issues"
+    "url": "https://github.com/adamreger/ecc-antigravity/issues"
   },
   "files": [
-    ".cursor/",
-    ".opencode/commands/",
-    ".opencode/instructions/",
-    ".opencode/plugins/",
-    ".opencode/prompts/",
-    ".opencode/tools/",
-    ".opencode/index.ts",
-    ".opencode/opencode.json",
-    ".opencode/package.json",
-    ".opencode/tsconfig.json",
-    ".opencode/MIGRATION.md",
-    ".opencode/README.md",
     "agents/",
     "commands/",
-    "contexts/",
     "examples/CLAUDE.md",
     "examples/user-CLAUDE.md",
     "examples/statusline.json",
-    "hooks/",
     "mcp-configs/",
-    "plugins/",
     "rules/",
-    "schemas/",
     "scripts/ci/",
-    "scripts/hooks/",
     "scripts/lib/",
-    "scripts/claw.js",
     "scripts/setup-package-manager.js",
     "scripts/skill-create-output.js",
     "skills/",
-    ".claude-plugin/plugin.json",
-    ".claude-plugin/README.md",
-    "install.sh",
-    "llms.txt"
+    "workflows/",
+    "install.sh"
   ],
   "bin": {
     "ecc-install": "install.sh"
   },
   "scripts": {
-    "postinstall": "echo '\\n  ecc-universal installed!\\n  Run: npx ecc-install typescript\\n  Docs: https://github.com/affaan-m/everything-claude-code\\n'",
+    "postinstall": "echo '\\n  ecc-antigravity installed!\\n  Run: npx ecc-install typescript\\n  Docs: https://github.com/adamreger/ecc-antigravity\\n'",
     "lint": "eslint . && markdownlint '**/*.md' --ignore node_modules",
-    "claw": "node scripts/claw.js",
-    "test": "node scripts/ci/validate-agents.js && node scripts/ci/validate-commands.js && node scripts/ci/validate-rules.js && node scripts/ci/validate-skills.js && node scripts/ci/validate-hooks.js && node tests/run-all.js"
+    "test": "node scripts/ci/validate-workflows.js && node scripts/ci/validate-skills.js && node scripts/ci/validate-rules.js && node tests/run-all.js"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",

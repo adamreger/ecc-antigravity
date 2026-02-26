@@ -31,6 +31,7 @@ const BOX_W = 58;
 
 // Build a box line with proper padding (accounts for invisible ANSI escapes)
 const cBoxLine = (content) => {
+  // eslint-disable-next-line no-control-regex
   const visible = content.replace(/\x1b\[[0-9;]*m/g, '').length;
   const pad = Math.max(0, BOX_W - visible);
   return `${CYAN}║${NC}${content}${' '.repeat(pad)}${CYAN}║${NC}`;
