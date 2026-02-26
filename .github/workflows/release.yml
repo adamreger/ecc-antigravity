@@ -8,8 +8,19 @@ permissions:
   contents: write
 
 jobs:
+  test:
+    uses: ./.github/workflows/reusable-test.yml
+    with:
+      os: ubuntu-latest
+      node-version: '20.x'
+      package-manager: npm
+
+  validate:
+    uses: ./.github/workflows/reusable-validate.yml
+
   release:
+    needs: [test, validate]
     uses: ./.github/workflows/reusable-release.yml
     with:
       tag: ${{ github.ref_name }}
-      generate-notes: false
+      generate-notes: true
