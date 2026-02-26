@@ -9,43 +9,28 @@ const path = require('path');
 const fs = require('fs');
 const os = require('os');
 
-// Import the modules
+const { test, section, header, summary } = require('./test-helpers');
 const pm = require('../../scripts/lib/package-manager');
 
-// Test helper
-function test(name, fn) {
-  try {
-    fn();
-    console.log(` ✓ ${name}`);
-    return true;
-  } catch (_err) {
-    console.log(` ✗ ${name}`);
-    console.log(` Error: ${_err.message}`);
-    return false;
-  }
-}
 
-// Create a temporary test directory
 function createTestDir() {
   const testDir = path.join(os.tmpdir(), `pm-test-${Date.now()}`);
   fs.mkdirSync(testDir, { recursive: true });
   return testDir;
 }
 
-// Clean up test directory
 function cleanupTestDir(testDir) {
   fs.rmSync(testDir, { recursive: true, force: true });
 }
 
-// Test suite
 function runTests() {
-  console.log('\n=== Testing package-manager.js ===\n');
+  header('package-manager.js');
 
   let passed = 0;
   let failed = 0;
 
   // PACKAGE_MANAGERS constant tests
-  console.log('PACKAGE_MANAGERS Constant:');
+  section('PACKAGE_MANAGERS Constant');
 
   if (test('PACKAGE_MANAGERS has all expected managers', () => {
     assert.ok(pm.PACKAGE_MANAGERS.npm, 'Should have npm');
@@ -66,7 +51,7 @@ function runTests() {
   else failed++;
 
   // detectFromLockFile tests
-  console.log('\ndetectFromLockFile:');
+  section('detectFromLockFile');
 
   if (test('detects npm from package-lock.json', () => {
     const testDir = createTestDir();
@@ -143,7 +128,7 @@ function runTests() {
   else failed++;
 
   // detectFromPackageJson tests
-  console.log('\ndetectFromPackageJson:');
+  section('detectFromPackageJson');
 
   if (test('detects package manager from packageManager field', () => {
     const testDir = createTestDir();
@@ -193,7 +178,7 @@ function runTests() {
   else failed++;
 
   // getAvailablePackageManagers tests
-  console.log('\ngetAvailablePackageManagers:');
+  section('getAvailablePackageManagers');
 
   if (test('returns array of available managers', () => {
     const available = pm.getAvailablePackageManagers();
@@ -204,7 +189,7 @@ function runTests() {
   else failed++;
 
   // getPackageManager tests
-  console.log('\ngetPackageManager:');
+  section('getPackageManager');
 
   if (test('returns object with name, config, and source', () => {
     const result = pm.getPackageManager();
@@ -250,7 +235,7 @@ function runTests() {
   else failed++;
 
   // getRunCommand tests
-  console.log('\ngetRunCommand:');
+  section('getRunCommand');
 
   if (test('returns correct install command', () => {
     const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
@@ -285,7 +270,7 @@ function runTests() {
   else failed++;
 
   // getExecCommand tests
-  console.log('\ngetExecCommand:');
+  section('getExecCommand');
 
   if (test('returns correct exec command for npm', () => {
     const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
@@ -320,7 +305,7 @@ function runTests() {
   else failed++;
 
   // getCommandPattern tests
-  console.log('\ngetCommandPattern:');
+  section('getCommandPattern');
 
   if (test('generates pattern for dev command', () => {
     const pattern = pm.getCommandPattern('dev');
@@ -343,7 +328,7 @@ function runTests() {
   else failed++;
 
   // getSelectionPrompt tests
-  console.log('\ngetSelectionPrompt:');
+  section('getSelectionPrompt');
 
   if (test('returns informative prompt', () => {
     const prompt = pm.getSelectionPrompt();
@@ -354,7 +339,7 @@ function runTests() {
   else failed++;
 
   // setProjectPackageManager tests
-  console.log('\nsetProjectPackageManager:');
+  section('setProjectPackageManager');
 
   if (test('sets project package manager', () => {
     const testDir = createTestDir();
@@ -381,7 +366,7 @@ function runTests() {
   else failed++;
 
   // setPreferredPackageManager tests
-  console.log('\nsetPreferredPackageManager:');
+  section('setPreferredPackageManager');
 
   if (test('rejects unknown package manager', () => {
     assert.throws(() => {
@@ -391,7 +376,7 @@ function runTests() {
   else failed++;
 
   // detectFromPackageJson edge cases
-  console.log('\ndetectFromPackageJson (edge cases):');
+  section('detectFromPackageJson (edge cases)');
 
   if (test('handles invalid JSON in package.json', () => {
     const testDir = createTestDir();
@@ -418,7 +403,7 @@ function runTests() {
   else failed++;
 
   // getExecCommand edge cases
-  console.log('\ngetExecCommand (edge cases):');
+  section('getExecCommand (edge cases)');
 
   if (test('returns exec command without args', () => {
     const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
@@ -437,7 +422,7 @@ function runTests() {
   else failed++;
 
   // getRunCommand additional cases
-  console.log('\ngetRunCommand (additional):');
+  section('getRunCommand (additional)');
 
   if (test('returns correct build command', () => {
     const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
@@ -485,7 +470,7 @@ function runTests() {
   else failed++;
 
   // DETECTION_PRIORITY tests
-  console.log('\nDETECTION_PRIORITY:');
+  section('DETECTION_PRIORITY');
 
   if (test('has pnpm first', () => {
     assert.strictEqual(pm.DETECTION_PRIORITY[0], 'pnpm');
@@ -498,7 +483,7 @@ function runTests() {
   else failed++;
 
   // getCommandPattern additional cases
-  console.log('\ngetCommandPattern (additional):');
+  section('getCommandPattern (additional)');
 
   if (test('generates pattern for install command', () => {
     const pattern = pm.getCommandPattern('install');
@@ -521,7 +506,7 @@ function runTests() {
   else failed++;
 
   // getPackageManager robustness tests
-  console.log('\ngetPackageManager (robustness):');
+  section('getPackageManager (robustness)');
 
   if (test('falls through on corrupted project config JSON', () => {
     const testDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pm-robust-'));
@@ -565,7 +550,7 @@ function runTests() {
   else failed++;
 
   // getRunCommand validation tests
-  console.log('\ngetRunCommand (validation):');
+  section('getRunCommand (validation)');
 
   if (test('rejects empty script name', () => {
     assert.throws(() => pm.getRunCommand(''), /non-empty string/);
@@ -604,7 +589,7 @@ function runTests() {
   else failed++;
 
   // getExecCommand validation tests
-  console.log('\ngetExecCommand (validation):');
+  section('getExecCommand (validation)');
 
   if (test('rejects empty binary name', () => {
     assert.throws(() => pm.getExecCommand(''), /non-empty string/);
@@ -638,7 +623,7 @@ function runTests() {
   else failed++;
 
   // getPackageManager source detection tests
-  console.log('\ngetPackageManager (source detection):');
+  section('getPackageManager (source detection)');
 
   if (test('detects from valid project-config (.antigravity/package-manager.json)', () => {
     const testDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pm-projcfg-'));
@@ -724,7 +709,7 @@ function runTests() {
   else failed++;
 
   // setPreferredPackageManager success
-  console.log('\nsetPreferredPackageManager (success):');
+  section('setPreferredPackageManager (success)');
 
   if (test('successfully saves preferred package manager', () => {
     // This writes to ~/.antigravity/package-manager.json — read original to restore
@@ -754,7 +739,7 @@ function runTests() {
   else failed++;
 
   // getCommandPattern completeness
-  console.log('\ngetCommandPattern (completeness):');
+  section('getCommandPattern (completeness)');
 
   if (test('generates pattern for test command', () => {
     const pattern = pm.getCommandPattern('test');
@@ -772,7 +757,7 @@ function runTests() {
   else failed++;
 
   // getRunCommand PM-specific format tests
-  console.log('\ngetRunCommand (PM-specific formats):');
+  section('getRunCommand (PM-specific formats)');
 
   if (test('pnpm custom script: pnpm (no run keyword)', () => {
     const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
@@ -863,7 +848,7 @@ function runTests() {
   else failed++;
 
   // getExecCommand PM-specific format tests
-  console.log('\ngetExecCommand (PM-specific formats):');
+  section('getExecCommand (PM-specific formats)');
 
   if (test('pnpm exec: pnpm dlx <binary>', () => {
     const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
@@ -918,8 +903,7 @@ function runTests() {
   })) passed++;
   else failed++;
 
-  // ─── Round 21: getExecCommand args validation ───
-  console.log('\ngetExecCommand (args validation):');
+  section('getExecCommand (args validation)');
 
   if (test('rejects args with shell metacharacter semicolon', () => {
     assert.throws(() => pm.getExecCommand('prettier', '; rm -rf /'), /unsafe characters/);
@@ -958,8 +942,7 @@ function runTests() {
   })) passed++;
   else failed++;
 
-  // ─── Round 21: getCommandPattern regex escaping ───
-  console.log('\ngetCommandPattern (regex escaping):');
+  section('getCommandPattern (regex escaping)');
 
   if (test('escapes dot in action name for regex safety', () => {
     const pattern = pm.getCommandPattern('test.all');
@@ -984,8 +967,7 @@ function runTests() {
   })) passed++;
   else failed++;
 
-  // ── Round 27: input validation and escapeRegex edge cases ──
-  console.log('\ngetRunCommand (non-string input):');
+  section('getRunCommand (non-string input)');
 
   if (test('rejects undefined script name', () => {
     assert.throws(() => pm.getRunCommand(undefined), /non-empty string/);
@@ -1002,7 +984,7 @@ function runTests() {
   })) passed++;
   else failed++;
 
-  console.log('\ngetExecCommand (non-string binary):');
+  section('getExecCommand (non-string binary)');
 
   if (test('rejects undefined binary name', () => {
     assert.throws(() => pm.getExecCommand(undefined), /non-empty string/);
@@ -1014,7 +996,7 @@ function runTests() {
   })) passed++;
   else failed++;
 
-  console.log('\ngetCommandPattern (escapeRegex completeness):');
+  section('getCommandPattern (escapeRegex completeness)');
 
   if (test('escapes all regex metacharacters in action', () => {
     // All regex metacharacters: . * + ? ^ $ { } ( ) | [ ] \
@@ -1036,7 +1018,7 @@ function runTests() {
   })) passed++;
   else failed++;
 
-  console.log('\ngetPackageManager (global config edge cases):');
+  section('getPackageManager (global config edge cases)');
 
   if (test('ignores global config with non-string packageManager', () => {
     // This tests the path through loadConfig where packageManager is not a valid PM name
@@ -1055,8 +1037,7 @@ function runTests() {
   })) passed++;
   else failed++;
 
-  // ── Round 30: getCommandPattern with special action patterns ──
-  console.log('\nRound 30: getCommandPattern edge cases:');
+  section('getCommandPattern edge cases');
 
   if (test('escapes pipe character in action name', () => {
     const pattern = pm.getCommandPattern('lint|fix');
@@ -1090,8 +1071,7 @@ function runTests() {
   })) passed++;
   else failed++;
 
-  // ── Round 31: setProjectPackageManager write verification ──
-  console.log('\nsetProjectPackageManager (write verification, Round 31):');
+  section('setProjectPackageManager (write verification)');
 
   if (test('setProjectPackageManager creates .antigravity directory if missing', () => {
     const testDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pm-mkdir-'));
@@ -1122,8 +1102,7 @@ function runTests() {
   })) passed++;
   else failed++;
 
-  // ── Round 31: getExecCommand safe argument edge cases ──
-  console.log('\ngetExecCommand (safe argument edge cases, Round 31):');
+  section('getExecCommand (safe argument edge cases)');
 
   if (test('allows colons in args (e.g. --fix:all)', () => {
     const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
@@ -1164,8 +1143,7 @@ function runTests() {
   })) passed++;
   else failed++;
 
-  // ── Round 34: getExecCommand non-string args & packageManager type ──
-  console.log('\nRound 34: getExecCommand non-string args:');
+  section('getExecCommand non-string args');
 
   if (test('getExecCommand with args=0 produces command without extra args', () => {
     const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
@@ -1210,7 +1188,7 @@ function runTests() {
   })) passed++;
   else failed++;
 
-  console.log('\nRound 34: detectFromPackageJson with non-string packageManager:');
+  section('detectFromPackageJson with non-string packageManager');
 
   if (test('detectFromPackageJson handles array packageManager field gracefully', () => {
     const tmpDir = createTestDir();
@@ -1238,8 +1216,7 @@ function runTests() {
   })) passed++;
   else failed++;
 
-  // ── Round 48: detectFromPackageJson format edge cases ──
-  console.log('\nRound 48: detectFromPackageJson (version format edge cases):');
+  section('detectFromPackageJson (version format edge cases)');
 
   if (test('returns null for packageManager with non-@ separator', () => {
     const testDir = createTestDir();
@@ -1307,8 +1284,7 @@ function runTests() {
   })) passed++;
   else failed++;
 
-  // ── Round 69: getPackageManager global-config success path ──
-  console.log('\nRound 69: getPackageManager (global-config success):');
+  section('getPackageManager (global-config success)');
 
   if (test('getPackageManager returns source global-config when valid global config exists', () => {
     const tmpDir = createTestDir();
@@ -1352,8 +1328,7 @@ function runTests() {
   })) passed++;
   else failed++;
 
-  // ── Round 71: setPreferredPackageManager save failure wraps error ──
-  console.log('\nRound 71: setPreferredPackageManager (save failure):');
+  section('setPreferredPackageManager (save failure)');
 
   if (test('setPreferredPackageManager throws wrapped error when save fails', () => {
     if (process.platform === 'win32' || process.getuid?.() === 0) {
@@ -1391,8 +1366,7 @@ function runTests() {
   })) passed++;
   else failed++;
 
-  // ── Round 72: setProjectPackageManager save failure wraps error ──
-  console.log('\nRound 72: setProjectPackageManager (save failure):');
+  section('setProjectPackageManager (save failure)');
 
   if (test('setProjectPackageManager throws wrapped error when write fails', () => {
     if (process.platform === 'win32' || process.getuid?.() === 0) {
@@ -1415,8 +1389,7 @@ function runTests() {
   })) passed++;
   else failed++;
 
-  // ── Round 80: getExecCommand with truthy non-string args ──
-  console.log('\nRound 80: getExecCommand (truthy non-string args):');
+  section('getExecCommand (truthy non-string args)');
 
   if (test('getExecCommand with args=42 (truthy number) appends stringified value', () => {
     const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
@@ -1435,8 +1408,7 @@ function runTests() {
   })) passed++;
   else failed++;
 
-  // ── Round 86: detectFromPackageJson with empty (0-byte) package.json ──
-  console.log('\nRound 86: detectFromPackageJson (empty package.json):');
+  section('detectFromPackageJson (empty package.json)');
 
   if (test('detectFromPackageJson returns null for empty (0-byte) package.json', () => {
     // package-manager.js line 109-111: readFile returns "" for empty file.
@@ -1449,8 +1421,7 @@ function runTests() {
   })) passed++;
   else failed++;
 
-  // ── Round 91: getCommandPattern with empty action string ──
-  console.log('\nRound 91: getCommandPattern (empty action):');
+  section('getCommandPattern (empty action)');
 
   if (test('getCommandPattern with empty string returns valid regex pattern', () => {
     // package-manager.js line 401-409: Empty action falls to the else branch.
@@ -1468,8 +1439,7 @@ function runTests() {
   })) passed++;
   else failed++;
 
-  // ── Round 91: detectFromPackageJson with whitespace-only packageManager ──
-  console.log('\nRound 91: detectFromPackageJson (whitespace-only packageManager):');
+  section('detectFromPackageJson (whitespace-only packageManager)');
 
   if (test('detectFromPackageJson returns null for whitespace-only packageManager field', () => {
     // package-manager.js line 114-119: \" \" is truthy, so enters the if block.
@@ -1485,13 +1455,12 @@ function runTests() {
   })) passed++;
   else failed++;
 
-  // ── Round 92: detectFromPackageJson with empty string packageManager ──
-  console.log('\nRound 92: detectFromPackageJson (empty string packageManager):');
+  section('detectFromPackageJson (empty string packageManager)');
 
   if (test('detectFromPackageJson returns null for empty string packageManager field', () => {
     // package-manager.js line 114: if (pkg.packageManager) — empty string \"\" is falsy,
     // so the if block is skipped entirely. Function returns null without attempting split.
-    // This is distinct from Round 91's whitespace test (\" \" is truthy and enters the if).
+    // This is distinct from the whitespace test ("  " is truthy and enters the if).
     const testDir = createTestDir();
     fs.writeFileSync(
       path.join(testDir, 'package.json'),
@@ -1503,8 +1472,7 @@ function runTests() {
   })) passed++;
   else failed++;
 
-  // ── Round 94: detectFromPackageJson with scoped package name ──
-  console.log('\nRound 94: detectFromPackageJson (scoped package name @scope/pkg@version):');
+  section('detectFromPackageJson (scoped package name @scope/pkg@version)');
 
   if (test('detectFromPackageJson returns null for scoped package name (@scope/pkg@version)', () => {
     // package-manager.js line 116: pmName = pkg.packageManager.split('@')[0]\
@@ -1524,8 +1492,7 @@ function runTests() {
   })) passed++;
   else failed++;
 
-  // ── Round 94: getPackageManager with empty string ANTIGRAVITY_PACKAGE_MANAGER ──
-  console.log('\nRound 94: getPackageManager (empty string ANTIGRAVITY_PACKAGE_MANAGER env var):');
+  section('getPackageManager (empty string ANTIGRAVITY_PACKAGE_MANAGER env var)');
 
   if (test('getPackageManager skips empty string ANTIGRAVITY_PACKAGE_MANAGER (falsy short-circuit)', () => {
     // package-manager.js line 168: if (envPm && PACKAGE_MANAGERS[envPm])\
@@ -1547,8 +1514,7 @@ function runTests() {
   })) passed++;
   else failed++;
 
-  // ── Round 104: detectFromLockFile with null projectDir (no input validation) ──
-  console.log('\nRound 104: detectFromLockFile (null projectDir — throws TypeError):');
+  section('detectFromLockFile (null projectDir — throws TypeError)');
 
   if (test('detectFromLockFile(null) throws TypeError (path.join rejects null)', () => {
     // package-manager.js line 95: `path.join(projectDir, pm.lockFile)` — there is no\
@@ -1563,8 +1529,7 @@ function runTests() {
   })) passed++;
   else failed++;
 
-  // ── Round 105: getExecCommand with object args (bypasses SAFE_ARGS_REGEX, coerced to [object Object]) ──
-  console.log('\nRound 105: getExecCommand (object args — typeof bypass coerces to [object Object]):');
+  section('getExecCommand (object args — typeof bypass coerces to [object Object])');
 
   if (test('getExecCommand with args={} bypasses SAFE_ARGS validation and coerces to "[object Object]"', () => {
     // package-manager.js line 334: `if (args && typeof args === 'string' && !SAFE_ARGS_REGEX.test(args))`
@@ -1584,8 +1549,7 @@ function runTests() {
   })) passed++;
   else failed++;
 
-  // ── Round 109: getExecCommand with ../ path traversal in binary — SAFE_NAME_REGEX allows it ──
-  console.log('\nRound 109: getExecCommand (path traversal in binary — SAFE_NAME_REGEX permits ../ in binary name):');
+  section('getExecCommand (path traversal in binary — SAFE_NAME_REGEX permits ../ in binary name)');
 
   if (test('getExecCommand accepts ../../../etc/passwd as binary because SAFE_NAME_REGEX allows ../', () => {
     const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
@@ -1607,8 +1571,7 @@ function runTests() {
   })) passed++;
   else failed++;
 
-  // ── Round 108: getRunCommand with path traversal — SAFE_NAME_REGEX allows ../ sequences ──
-  console.log('\nRound 108: getRunCommand (path traversal — SAFE_NAME_REGEX permits ../ via allowed / and . chars):');
+  section('getRunCommand (path traversal — SAFE_NAME_REGEX permits ../ via allowed / and . chars)');
 
   if (test('getRunCommand accepts @scope/../../evil because SAFE_NAME_REGEX allows ../', () => {
     const originalEnv = process.env.ANTIGRAVITY_PACKAGE_MANAGER;
@@ -1631,8 +1594,7 @@ function runTests() {
   })) passed++;
   else failed++;
 
-  // Round 111: getExecCommand with newline in args
-  console.log('\n' + String.raw`Round 111: getExecCommand (newline in args — SAFE_ARGS_REGEX \s matches \n):`);
+  section(String.raw`getExecCommand (newline in args — SAFE_ARGS_REGEX \s matches \n)`);
 
   if (test('getExecCommand accepts newline in args because SAFE_ARGS_REGEX includes newline', () => {
     // SAFE_ARGS_REGEX = /^[@a-zA-Z0-9\\s_.\\/:=,'\"*+-\\]+$/
@@ -1656,13 +1618,7 @@ function runTests() {
   })) passed++;
   else failed++;
 
-  // Summary
-  console.log('\n=== Test Results ===');
-  console.log(`Passed: ${passed}`);
-  console.log(`Failed: ${failed}`);
-  console.log(`Total: ${passed + failed}
-`);
-
+  summary(passed, failed);
   process.exit(failed > 0 ? 1 : 0);
 }
 

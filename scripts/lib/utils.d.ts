@@ -16,7 +16,7 @@ export const isLinux: boolean;
 export function getHomeDir(): string;
 
 /** Get the Claude config directory (~/.claude) */
-export function getClaudeDir(): string;
+export function getAntigravityDir(): string;
 
 /** Get the sessions directory (~/.claude/sessions) */
 export function getSessionsDir(): string;
@@ -48,7 +48,7 @@ export function getDateTimeString(): string;
 // --- Session/Project ---
 
 /**
- * Get short session ID from CLAUDE_SESSION_ID environment variable.
+ * Get short session ID from ANTIGRAVITY_SESSION_ID environment variable.
  * Returns last 8 characters, falls back to project name then the provided fallback.
  */
 export function getSessionIdShort(fallback?: string): string;

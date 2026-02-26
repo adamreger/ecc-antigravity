@@ -7,26 +7,8 @@
  */
 
 const assert = require('assert');
-// Import the module
 const { SkillCreateOutput } = require('../../scripts/skill-create-output');
-
-// We also need to test the un-exported helpers by requiring the source
-// and extracting them from the module scope. Since they're not exported,
-// we test them indirectly through the class methods, plus test the
-// exported class directly.
-
-// Test helper
-function test(name, fn) {
-  try {
-    fn();
-    console.log(`  \u2713 ${name}`);
-    return true;
-  } catch (err) {
-    console.log(`  \u2717 ${name}`);
-    console.log(`    Error: ${err.message}`);
-    return false;
-  }
-}
+const { test, section, header, summary } = require('../lib/test-helpers');
 
 // Strip ANSI escape sequences for assertions
 function stripAnsi(str) {
@@ -48,13 +30,12 @@ function captureLog(fn) {
 }
 
 function runTests() {
-  console.log('\n=== Testing skill-create-output.js ===\n');
+  header('skill-create-output.js');
 
   let passed = 0;
   let failed = 0;
 
-  // Constructor tests
-  console.log('SkillCreateOutput constructor:');
+  section('SkillCreateOutput constructor');
 
   if (test('creates instance with repo name', () => {
     const output = new SkillCreateOutput('test-repo');
@@ -67,8 +48,7 @@ function runTests() {
     assert.strictEqual(output.width, 100);
   })) passed++; else failed++;
 
-  // header() tests
-  console.log('\nheader():');
+  section('header()');
 
   if (test('outputs header with repo name', () => {
     const output = new SkillCreateOutput('my-project');
@@ -85,8 +65,7 @@ function runTests() {
     assert.ok(logs.length > 0, 'Should produce output');
   })) passed++; else failed++;
 
-  // analysisResults() tests
-  console.log('\nanalysisResults():');
+  section('analysisResults()');
 
   if (test('displays analysis data', () => {
     const output = new SkillCreateOutput('repo');
@@ -102,8 +81,7 @@ function runTests() {
     assert.ok(combined.includes('200'), 'Should show file count');
   })) passed++; else failed++;
 
-  // patterns() tests
-  console.log('\npatterns():');
+  section('patterns()');
 
   if (test('displays patterns with confidence bars', () => {
     const output = new SkillCreateOutput('repo');
@@ -127,8 +105,7 @@ function runTests() {
     assert.ok(stripAnsi(combined).includes('80%'), 'Should default to 80% confidence');
   })) passed++; else failed++;
 
-  // instincts() tests
-  console.log('\ninstincts():');
+  section('instincts()');
 
   if (test('displays instincts in a box', () => {
     const output = new SkillCreateOutput('repo');
@@ -142,8 +119,7 @@ function runTests() {
     assert.ok(combined.includes('70%'), 'Should show second confidence');
   })) passed++; else failed++;
 
-  // output() tests
-  console.log('\noutput():');
+  section('output()');
 
   if (test('displays file paths', () => {
     const output = new SkillCreateOutput('repo');
@@ -157,8 +133,7 @@ function runTests() {
     assert.ok(combined.includes('Complete'), 'Should show completion message');
   })) passed++; else failed++;
 
-  // nextSteps() tests
-  console.log('\nnextSteps():');
+  section('nextSteps()');
 
   if (test('displays next steps with commands', () => {
     const output = new SkillCreateOutput('repo');
@@ -169,8 +144,7 @@ function runTests() {
     assert.ok(combined.includes('/evolve'), 'Should show evolve command');
   })) passed++; else failed++;
 
-  // footer() tests
-  console.log('\nfooter():');
+  section('footer()');
 
   if (test('displays footer with attribution', () => {
     const output = new SkillCreateOutput('repo');
@@ -179,8 +153,7 @@ function runTests() {
     assert.ok(combined.includes('Everything Claude Code'), 'Should include project name');
   })) passed++; else failed++;
 
-  // progressBar edge cases (tests the clamp fix)
-  console.log('\nprogressBar edge cases:');
+  section('progressBar edge cases');
 
   if (test('does not crash with confidence > 1.0 (percent > 100)', () => {
     const output = new SkillCreateOutput('repo');
@@ -210,8 +183,7 @@ function runTests() {
     assert.ok(combined.includes('100%'), 'Should show 100%');
   })) passed++; else failed++;
 
-  // Empty array edge cases
-  console.log('\nempty array edge cases:');
+  section('empty array edge cases');
 
   if (test('patterns() with empty array produces header but no entries', () => {
     const output = new SkillCreateOutput('repo');
@@ -227,8 +199,7 @@ function runTests() {
     assert.ok(combined.includes('Instincts'), 'Should show box title');
   })) passed++; else failed++;
 
-  // Box drawing crash fix (regression test)
-  console.log('\nbox() crash prevention:');
+  section('box() crash prevention');
 
   if (test('box does not crash on title longer than width', () => {
     const output = new SkillCreateOutput('repo', { width: 20 });
@@ -249,8 +220,7 @@ function runTests() {
     assert.ok(logs.length > 0, 'Should produce output without crash');
   })) passed++; else failed++;
 
-  // box() alignment regression test
-  console.log('\nbox() alignment:');
+  section('box() alignment');
 
   if (test('top, middle, and bottom lines have equal visual width', () => {
     const output = new SkillCreateOutput('repo', { width: 40 });
@@ -274,8 +244,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 27: box and progressBar edge cases ──
-  console.log('\nbox() content overflow:');
+  section('box() content overflow');
 
   if (test('box does not crash when content line exceeds width', () => {
     const output = new SkillCreateOutput('repo', { width: 30 });
@@ -319,8 +288,7 @@ function runTests() {
     assert.ok(combined.includes('Powered by'), 'Should include attribution text');
   })) passed++; else failed++;
 
-  // ── Round 34: header width alignment ──
-  console.log('\nheader() width alignment (Round 34):');
+  section('header() width alignment');
 
   if (test('header subtitle line matches border width', () => {
     const output = new SkillCreateOutput('test-repo');
@@ -374,8 +342,7 @@ function runTests() {
       `Subtitle line should be 66 chars, got ${subtitleLine.length}`);
   })) passed++; else failed++;
 
-  // ── Round 35: box() width accuracy ──
-  console.log('\nbox() width accuracy (Round 35):');
+  section('box() width accuracy');
 
   if (test('box lines in instincts() match the default box width of 60', () => {
     const output = new SkillCreateOutput('repo');
@@ -451,8 +418,7 @@ function runTests() {
     });
   })) passed++; else failed++;
 
-  // ── Round 54: analysisResults with zero values ──
-  console.log('\nanalysisResults zero values (Round 54):');
+  section('analysisResults zero values');
 
   if (test('analysisResults handles zero values for all data fields', () => {
     const output = new SkillCreateOutput('repo');
@@ -470,8 +436,7 @@ function runTests() {
     assert.ok(boxLines.length >= 3, 'Should render a complete box');
   })) passed++; else failed++;
 
-  // ── Round 68: demo function export ──
-  console.log('\ndemo export (Round 68):');
+  section('demo export');
 
   if (test('module exports demo function alongside SkillCreateOutput', () => {
     const mod = require('../../scripts/skill-create-output');
@@ -481,8 +446,7 @@ function runTests() {
     assert.strictEqual(typeof mod.SkillCreateOutput, 'function', 'SkillCreateOutput should be a constructor');
   })) passed++; else failed++;
 
-  // ── Round 85: patterns() confidence=0 uses ?? (not ||) ──
-  console.log('\nRound 85: patterns() confidence=0 nullish coalescing:');
+  section('patterns() confidence=0 nullish coalescing');
 
   if (test('patterns() with confidence=0 shows 0%, not 80% (nullish coalescing fix)', () => {
     const output = new SkillCreateOutput('repo');
@@ -497,8 +461,7 @@ function runTests() {
       'Should NOT show 80% — confidence=0 is explicitly provided, not missing');
   })) passed++; else failed++;
 
-  // ── Round 87: analyzePhase() async method (untested) ──
-  console.log('\nRound 87: analyzePhase() async method:');
+  section('analyzePhase() async method');
 
   if (test('analyzePhase completes without error and writes to stdout', () => {
     const output = new SkillCreateOutput('test-repo');
@@ -509,7 +472,7 @@ function runTests() {
     // Capture stdout.write to verify output was produced.
     const writes = [];
     const origWrite = process.stdout.write;
-    process.stdout.write = function(str) { writes.push(String(str)); return true; };
+    process.stdout.write = function (str) { writes.push(String(str)); return true; };
     try {
       // Call synchronously by accessing the returned promise — we just need to
       // verify it doesn't throw during setup. The sleeps total 1.9s so we
@@ -525,8 +488,7 @@ function runTests() {
     assert.ok(writes.some(w => w.includes('Analyzing')), 'Should include "Analyzing" label');
   })) passed++; else failed++;
 
-  // Summary
-  console.log(`\nResults: Passed: ${passed}, Failed: ${failed}`);
+  summary(passed, failed);
   process.exit(failed > 0 ? 1 : 0);
 }
 

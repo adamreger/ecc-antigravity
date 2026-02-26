@@ -26,6 +26,12 @@ function extractFrontmatter(content) {
             frontmatter[key] = value;
         }
     }
+
+    // If we didn't extract any valid key-value pairs, treat it as missing
+    if (Object.keys(frontmatter).length === 0) {
+        return null;
+    }
+
     return frontmatter;
 }
 

@@ -188,7 +188,26 @@ Rules are always-follow guidelines. They're installed to `.agent/rules/` in your
 
 ---
 
-## What Was Changed From Upstream
+## 🧪 Running Tests
+
+The plugin includes a comprehensive test suite:
+
+```bash
+# Run all tests
+node tests/run-all.js
+
+# Run individual test files
+node tests/lib/utils.test.js
+node tests/lib/package-manager.test.js
+```
+
+---
+
+## Upstream
+
+This is a fork of [everything-claude-code](https://github.com/affaan-m/everything-claude-code) v1.6.0. Skills and rules are kept in sync with upstream; workflows are Antigravity-specific.
+
+### What Was Changed From Upstream
 
 This fork removes Claude Code-specific features that don't have Antigravity equivalents:
 
@@ -207,12 +226,6 @@ This fork removes Claude Code-specific features that don't have Antigravity equi
 **Agents were converted to workflows** in `workflows/`, adapted to Antigravity's workflow format (8 agents → 9 workflows). The installer copies them to `.agent/workflows/` in target projects.
 
 **Rules updated** to reference workflows instead of Claude Code agents.
-
----
-
-## Upstream
-
-This is a fork of [everything-claude-code](https://github.com/affaan-m/everything-claude-code) v1.6.0. Skills and rules are kept in sync with upstream; workflows are Antigravity-specific.
 
 ---
 

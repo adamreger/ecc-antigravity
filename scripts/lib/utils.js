@@ -21,24 +21,24 @@ function getHomeDir() {
 }
 
 /**
- * Get the Claude config directory
+ * Get the Antigravity config directory
  */
-function getClaudeDir() {
-  return path.join(getHomeDir(), '.claude');
+function getAntigravityDir() {
+  return path.join(getHomeDir(), '.antigravity');
 }
 
 /**
  * Get the sessions directory
  */
 function getSessionsDir() {
-  return path.join(getClaudeDir(), 'sessions');
+  return path.join(getAntigravityDir(), 'sessions');
 }
 
 /**
  * Get the learned skills directory
  */
 function getLearnedSkillsDir() {
-  return path.join(getClaudeDir(), 'skills', 'learned');
+  return path.join(getAntigravityDir(), 'skills', 'learned');
 }
 
 /**
@@ -108,11 +108,11 @@ function getProjectName() {
 }
 
 /**
- * Get short session ID from CLAUDE_SESSION_ID environment variable
+ * Get short session ID from ANTIGRAVITY_SESSION_ID environment variable
  * Returns last 8 characters, falls back to project name then 'default'
  */
 function getSessionIdShort(fallback = 'default') {
-  const sessionId = process.env.CLAUDE_SESSION_ID;
+  const sessionId = process.env.ANTIGRAVITY_SESSION_ID;
   if (sessionId && sessionId.length > 0) {
     return sessionId.slice(-8);
   }
@@ -491,7 +491,7 @@ module.exports = {
 
   // Directories
   getHomeDir,
-  getClaudeDir,
+  getAntigravityDir,
   getSessionsDir,
   getLearnedSkillsDir,
   getTempDir,

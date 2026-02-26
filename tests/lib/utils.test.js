@@ -8,31 +8,18 @@ const assert = require('assert');
 const path = require('path');
 const fs = require('fs');
 
-// Import the module
+const { test, section, header, summary } = require('./test-helpers');
 const utils = require('../../scripts/lib/utils');
 
-// Test helper
-function test(name, fn) {
-  try {
-    fn();
-    console.log(`  ✓ ${name}`);
-    return true;
-  } catch (err) {
-    console.log(`  ✗ ${name}`);
-    console.log(`    Error: ${err.message}`);
-    return false;
-  }
-}
 
-// Test suite
 function runTests() {
-  console.log('\n=== Testing utils.js ===\n');
+  header('utils.js');
 
   let passed = 0;
   let failed = 0;
 
   // Platform detection tests
-  console.log('Platform Detection:');
+  section('Platform Detection');
 
   if (test('isWindows/isMacOS/isLinux are booleans', () => {
     assert.strictEqual(typeof utils.isWindows, 'boolean');
@@ -48,7 +35,7 @@ function runTests() {
   })) passed++; else failed++;
 
   // Directory functions tests
-  console.log('\nDirectory Functions:');
+  section('Directory Functions');
 
   if (test('getHomeDir returns valid path', () => {
     const home = utils.getHomeDir();
@@ -88,7 +75,7 @@ function runTests() {
   })) passed++; else failed++;
 
   // Date/Time functions tests
-  console.log('\nDate/Time Functions:');
+  section('Date/Time Functions');
 
   if (test('getDateString returns YYYY-MM-DD format', () => {
     const date = utils.getDateString();
@@ -106,7 +93,7 @@ function runTests() {
   })) passed++; else failed++;
 
   // Project name tests
-  console.log('\nProject Name Functions:');
+  section('Project Name Functions');
 
   if (test('getGitRepoName returns string or null', () => {
     const repoName = utils.getGitRepoName();
@@ -119,7 +106,7 @@ function runTests() {
   })) passed++; else failed++;
 
   // Session ID tests
-  console.log('\nSession ID Functions:');
+  section('Session ID Functions');
 
   if (test('getSessionIdShort falls back to project name', () => {
     const original = process.env.ANTIGRAVITY_SESSION_ID;
@@ -155,7 +142,7 @@ function runTests() {
   })) passed++; else failed++;
 
   // File operations tests
-  console.log('\nFile Operations:');
+  section('File Operations');
 
   if (test('readFile returns null for non-existent file', () => {
     const content = utils.readFile('/non/existent/file/path.txt');
@@ -223,7 +210,7 @@ function runTests() {
   })) passed++; else failed++;
 
   // findFiles tests
-  console.log('\nfindFiles:');
+  section('findFiles');
 
   if (test('findFiles returns empty for non-existent directory', () => {
     const results = utils.findFiles('/non/existent/dir', '*.txt');
@@ -249,7 +236,7 @@ function runTests() {
   })) passed++; else failed++;
 
   // Edge case tests for defensive code
-  console.log('\nEdge Cases:');
+  section('Edge Cases');
 
   if (test('findFiles returns empty for null/undefined dir', () => {
     assert.deepStrictEqual(utils.findFiles(null, '*.txt'), []);
@@ -374,7 +361,7 @@ function runTests() {
   })) passed++; else failed++;
 
   // System functions tests
-  console.log('\nSystem Functions:');
+  section('System Functions');
 
   if (test('commandExists finds node', () => {
     const exists = utils.commandExists('node');
@@ -398,7 +385,7 @@ function runTests() {
   })) passed++; else failed++;
 
   // output() and log() tests
-  console.log('\noutput() and log():');
+  section('output() and log()');
 
   if (test('output() writes string to stdout', () => {
     // Capture stdout by temporarily replacing console.log
@@ -463,7 +450,7 @@ function runTests() {
   })) passed++; else failed++;
 
   // isGitRepo() tests
-  console.log('\nisGitRepo():');
+  section('isGitRepo()');
 
   if (test('isGitRepo returns true in a git repo', () => {
     // We're running from within the ECC repo, so this should be true
@@ -471,7 +458,7 @@ function runTests() {
   })) passed++; else failed++;
 
   // getGitModifiedFiles() tests
-  console.log('\ngetGitModifiedFiles():');
+  section('getGitModifiedFiles()');
 
   if (test('getGitModifiedFiles returns an array', () => {
     const files = utils.getGitModifiedFiles();
@@ -496,7 +483,7 @@ function runTests() {
   })) passed++; else failed++;
 
   // getLearnedSkillsDir() test
-  console.log('\ngetLearnedSkillsDir():');
+  section('getLearnedSkillsDir()');
 
   if (test('getLearnedSkillsDir returns path under Antigravity dir', () => {
     const dir = utils.getLearnedSkillsDir();
@@ -506,7 +493,7 @@ function runTests() {
   })) passed++; else failed++;
 
   // replaceInFile behavior tests
-  console.log('\nreplaceInFile (behavior):');
+  section('replaceInFile (behavior)');
 
   if (test('replaces first match when regex has no g flag', () => {
     const testFile = path.join(utils.getTempDir(), `utils-test-${Date.now()}.txt`);
@@ -584,7 +571,7 @@ function runTests() {
   })) passed++; else failed++;
 
   // writeFile edge cases
-  console.log('\nwriteFile (edge cases):');
+  section('writeFile (edge cases)');
 
   if (test('writeFile overwrites existing content', () => {
     const testFile = path.join(utils.getTempDir(), `utils-test-${Date.now()}.txt`);
@@ -611,7 +598,7 @@ function runTests() {
   })) passed++; else failed++;
 
   // findFiles with regex special characters in pattern
-  console.log('\nfindFiles (regex chars):');
+  section('findFiles (regex chars)');
 
   if (test('findFiles handles regex special chars in pattern', () => {
     const testDir = path.join(utils.getTempDir(), `utils-test-regex-${Date.now()}`);
@@ -653,7 +640,7 @@ function runTests() {
 
   // readStdinJson tests (via subprocess — safe hardcoded inputs)
   // Use execFileSync with input option instead of shell echo|pipe for Windows compat
-  console.log('\nreadStdinJson():');
+  section('readStdinJson()');
 
   const stdinScript = 'const u=require("./scripts/lib/utils");u.readStdinJson({timeoutMs:2000}).then(d=>{process.stdout.write(JSON.stringify(d))})';
   const stdinOpts = { encoding: 'utf8', cwd: path.join(__dirname, '..', '..'), timeout: 5000 };
@@ -685,7 +672,7 @@ function runTests() {
   })) passed++; else failed++;
 
   // grepFile with global regex (regression: g flag causes alternating matches)
-  console.log('\ngrepFile (global regex fix):');
+  section('grepFile (global regex fix)');
 
   if (test('grepFile with /g flag finds ALL matching lines (not alternating)', () => {
     const testFile = path.join(utils.getTempDir(), `utils-test-grep-g-${Date.now()}.txt`);
@@ -716,7 +703,7 @@ function runTests() {
   })) passed++; else failed++;
 
   // commandExists edge cases
-  console.log('\ncommandExists Edge Cases:');
+  section('commandExists Edge Cases');
 
   if (test('commandExists rejects empty string', () => {
     assert.strictEqual(utils.commandExists(''), false, 'Empty string should not be a valid command');
@@ -745,7 +732,7 @@ function runTests() {
   })) passed++; else failed++;
 
   // findFiles edge cases
-  console.log('\nfindFiles Edge Cases:');
+  section('findFiles Edge Cases');
 
   if (test('findFiles with ? wildcard matches single character', () => {
     const testDir = path.join(utils.getTempDir(), `ff-qmark-${Date.now()}`);
@@ -807,7 +794,7 @@ function runTests() {
   })) passed++; else failed++;
 
   // ensureDir edge cases
-  console.log('\nensureDir Edge Cases:');
+  section('ensureDir Edge Cases');
 
   if (test('ensureDir is safe for concurrent calls (EEXIST race)', () => {
     const testDir = path.join(utils.getTempDir(), `ensure-race-${Date.now()}`, 'nested');
@@ -833,7 +820,7 @@ function runTests() {
   })) passed++; else failed++;
 
   // runCommand edge cases
-  console.log('\nrunCommand Edge Cases:');
+  section('runCommand Edge Cases');
 
   if (test('runCommand returns trimmed output', () => {
     // Windows echo includes quotes in output, use node to ensure consistent behavior
@@ -849,7 +836,7 @@ function runTests() {
   })) passed++; else failed++;
 
   // getGitModifiedFiles edge cases
-  console.log('\ngetGitModifiedFiles Edge Cases:');
+  section('getGitModifiedFiles Edge Cases');
 
   if (test('getGitModifiedFiles returns array with empty patterns', () => {
     const files = utils.getGitModifiedFiles([]);
@@ -857,7 +844,7 @@ function runTests() {
   })) passed++; else failed++;
 
   // replaceInFile edge cases
-  console.log('\nreplaceInFile Edge Cases:');
+  section('replaceInFile Edge Cases');
 
   if (test('replaceInFile with regex capture groups works correctly', () => {
     const testFile = path.join(utils.getTempDir(), `replace-capture-${Date.now()}.txt`);
@@ -872,7 +859,7 @@ function runTests() {
   })) passed++; else failed++;
 
   // readStdinJson (function API, not actual stdin — more thorough edge cases)
-  console.log('\nreadStdinJson Edge Cases:');
+  section('readStdinJson Edge Cases');
 
   if (test('readStdinJson type check: returns a Promise', () => {
     // readStdinJson returns a Promise regardless of stdin state
@@ -881,8 +868,7 @@ function runTests() {
     // Don't await — just verify it's a Promise type
   })) passed++; else failed++;
 
-  // ── Round 28: readStdinJson maxSize truncation and edge cases ──
-  console.log('\nreadStdinJson maxSize truncation:');
+  section('readStdinJson maxSize truncation');
 
   if (test('readStdinJson maxSize stops accumulating after threshold (chunk-level guard)', () => {
     if (process.platform === 'win32') {
@@ -932,8 +918,7 @@ function runTests() {
     assert.deepStrictEqual(JSON.parse(result), {});
   })) passed++; else failed++;
 
-  // ── Round 31: ensureDir error propagation ──
-  console.log('\nensureDir Error Propagation (Round 31):');
+  section('ensureDir Error Propagation');
 
   if (test('ensureDir wraps non-EEXIST errors with descriptive message', () => {
     // Attempting to create a dir under a file should fail with ENOTDIR, not EEXIST
@@ -967,8 +952,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 31: runCommand stderr preference on failure ──
-  console.log('\nrunCommand failure output (Round 31):');
+  section('runCommand failure output');
 
   if (test('runCommand returns stderr content on failure when stderr exists', () => {
     const result = utils.runCommand('node -e "process.stderr.write(\'custom error\'); process.exit(1)"');
@@ -983,8 +967,7 @@ function runTests() {
     assert.ok(result.output.length > 0, 'Should have some error output');
   })) passed++; else failed++;
 
-  // ── Round 31: getGitModifiedFiles with empty patterns ──
-  console.log('\ngetGitModifiedFiles empty patterns (Round 31):');
+  section('getGitModifiedFiles empty patterns');
 
   if (test('getGitModifiedFiles with empty array returns all modified files', () => {
     // With an empty patterns array, every file should match (no filter applied)
@@ -995,8 +978,7 @@ function runTests() {
       'Empty patterns array should behave same as no patterns');
   })) passed++; else failed++;
 
-  // ── Round 33: readStdinJson error event handling ──
-  console.log('\nreadStdinJson error event (Round 33):');
+  section('readStdinJson error event');
 
   if (test('readStdinJson resolves {} when stdin emits error (via broken pipe)', () => {
     // Spawn a subprocess that reads from stdin, but close the pipe immediately
@@ -1042,7 +1024,11 @@ function runTests() {
     try {
       fs.writeFileSync(filePath, 'hello world', 'utf8');
       fs.chmodSync(filePath, 0o444);
+      // Suppress expected EACCES stderr from replaceInFile's error logging
+      const origError = console.error;
+      console.error = () => { };
       const result = utils.replaceInFile(filePath, 'hello', 'goodbye');
+      console.error = origError;
       assert.strictEqual(result, false, 'Should return false when file is read-only');
       // Verify content unchanged
       const content = fs.readFileSync(filePath, 'utf8');
@@ -1053,8 +1039,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 69: getGitModifiedFiles with ALL invalid patterns ──
-  console.log('\ngetGitModifiedFiles all-invalid patterns (Round 69):');
+  section('getGitModifiedFiles all-invalid patterns');
 
   if (test('getGitModifiedFiles with all-invalid patterns skips filtering (returns all files)', () => {
     // When every pattern is invalid regex, compiled.length === 0 at line 386,
@@ -1067,8 +1052,7 @@ function runTests() {
       'All-invalid patterns should return same result as no patterns (no filtering)');
   })) passed++; else failed++;
 
-  // ── Round 71: findFiles recursive scan skips unreadable subdirectory ──
-  console.log('\nRound 71: findFiles (unreadable subdirectory in recursive scan):');
+  section('findFiles (unreadable subdirectory in recursive scan)');
 
   if (test('findFiles recursive scan skips unreadable subdirectory silently', () => {
     if (process.platform === 'win32' || process.getuid?.() === 0) {
@@ -1101,8 +1085,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 79: countInFile with valid string pattern ──
-  console.log('\nRound 79: countInFile (valid string pattern):');
+  section('countInFile (valid string pattern)');
 
   if (test('countInFile counts occurrences using a plain string pattern', () => {
     const testFile = path.join(utils.getTempDir(), `utils-test-count-str-${Date.now()}.txt`);
@@ -1117,8 +1100,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 79: grepFile with valid string pattern ──
-  console.log('\nRound 79: grepFile (valid string pattern):');
+  section('grepFile (valid string pattern)');
 
   if (test('grepFile finds matching lines using a plain string pattern', () => {
     const testFile = path.join(utils.getTempDir(), `utils-test-grep-str-${Date.now()}.txt`);
@@ -1136,8 +1118,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 84: findFiles inner statSync catch (TOCTOU — broken symlink) ──
-  console.log('\nRound 84: findFiles (inner statSync catch — broken symlink):');
+  section('findFiles (inner statSync catch — broken symlink)');
 
   if (test('findFiles skips broken symlinks that match the pattern', () => {
     // findFiles at utils.js:170-173: readdirSync returns entries including broken
@@ -1170,8 +1151,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 85: getSessionIdShort fallback parameter ──
-  console.log('\ngetSessionIdShort fallback (Round 85):');
+  section('getSessionIdShort fallback');
 
   if (test('getSessionIdShort uses fallback when getProjectName returns null (CWD at root)', () => {
     if (process.platform === 'win32') {
@@ -1199,8 +1179,7 @@ function runTests() {
       `At CWD=/ with no session ID, should use the fallback parameter. Got: "${result.stdout}"`);
   })) passed++; else failed++;
 
-  // ── Round 88: replaceInFile with empty replacement (deletion) ──
-  console.log('\nRound 88: replaceInFile with empty replacement string (deletion):');
+  section('replaceInFile with empty replacement string (deletion)');
   if (test('replaceInFile with empty string replacement deletes matched text', () => {
     const tmpDir = path.join(utils.getTempDir(), `ecc-r88-replace-empty-${Date.now()}`);
     fs.mkdirSync(tmpDir, { recursive: true });
@@ -1217,8 +1196,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 88: countInFile with valid file but zero matches ──
-  console.log('\nRound 88: countInFile with existing file but non-matching pattern:');
+  section('countInFile with existing file but non-matching pattern');
   if (test('countInFile returns 0 for valid file with no pattern matches', () => {
     const tmpDir = path.join(utils.getTempDir(), `ecc-r88-count-zero-${Date.now()}`);
     fs.mkdirSync(tmpDir, { recursive: true });
@@ -1236,8 +1214,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 92: countInFile with object pattern type ──
-  console.log('\nRound 92: countInFile (non-string non-RegExp pattern):');
+  section('countInFile (non-string non-RegExp pattern)');
 
   if (test('countInFile returns 0 for object pattern (neither string nor RegExp)', () => {
     // utils.js line 443-444: The else branch returns 0 when pattern is
@@ -1253,8 +1230,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 93: countInFile with /pattern/i (g flag appended) ──
-  console.log('\nRound 93: countInFile (case-insensitive RegExp, g flag auto-appended):');
+  section('countInFile (case-insensitive RegExp, g flag auto-appended)');
 
   if (test('countInFile with /pattern/i appends g flag and counts case-insensitively', () => {
     // utils.js line 440: pattern.flags = 'i', 'i'.includes('g') → false,
@@ -1270,8 +1246,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 93: countInFile with /pattern/gi (g flag already present) ──
-  console.log('\nRound 93: countInFile (case-insensitive RegExp, g flag preserved):');
+  section('countInFile (case-insensitive RegExp, g flag preserved)');
 
   if (test('countInFile with /pattern/gi preserves existing flags and counts correctly', () => {
     // utils.js line 440: pattern.flags = 'gi', 'gi'.includes('g') → true,
@@ -1287,8 +1262,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 95: countInFile with regex alternation (no g flag) ──
-  console.log('\nRound 95: countInFile (regex alternation without g flag):');
+  section('countInFile (regex alternation without g flag)');
 
   if (test('countInFile with /apple|banana/ (alternation, no g) counts all matches', () => {
     const tmpDir = path.join(utils.getTempDir(), `ecc-r95-alternation-${Date.now()}`);
@@ -1305,8 +1279,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 97: getSessionIdShort with whitespace-only ANTIGRAVITY_SESSION_ID ──
-  console.log('\nRound 97: getSessionIdShort (whitespace-only session ID):');
+  section('getSessionIdShort (whitespace-only session ID)');
 
   if (test('getSessionIdShort returns whitespace when ANTIGRAVITY_SESSION_ID is all spaces', () => {
     // utils.js line 116: if (sessionId && sessionId.length > 0) — '   ' is truthy
@@ -1329,8 +1302,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 97: countInFile with same RegExp object called twice (lastIndex reuse) ──
-  console.log('\nRound 97: countInFile (RegExp lastIndex reuse validation):');
+  section('countInFile (RegExp lastIndex reuse validation)');
 
   if (test('countInFile returns consistent count when same RegExp object is reused', () => {
     // utils.js lines 438-440: Always creates a new RegExp to prevent lastIndex
@@ -1355,8 +1327,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 98: findFiles with maxAge: -1 (negative boundary — excludes everything) ──
-  console.log('\nRound 98: findFiles (maxAge: -1 — negative boundary excludes all):');
+  section('findFiles (maxAge: -1 — negative boundary excludes all)');
 
   if (test('findFiles with maxAge: -1 excludes all files (ageInDays always >= 0)', () => {
     // utils.js line 176-178: `if (maxAge !== null) { ageInDays = ...; if (ageInDays <= maxAge) }`
@@ -1378,8 +1349,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 99: replaceInFile returns true even when pattern not found ──
-  console.log('\nRound 99: replaceInFile (no-match still returns true):');
+  section('replaceInFile (no-match still returns true)');
 
   if (test('replaceInFile returns true and rewrites file even when search does not match', () => {
     // utils.js lines 405-417: replaceInFile reads content, calls content.replace(search, replace),
@@ -1402,8 +1372,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 99: grepFile with CR-only line endings (\r without \n) ──
-  console.log('\nRound 99: grepFile (CR-only line endings — classic Mac format):');
+  section('grepFile (CR-only line endings — classic Mac format)');
 
   if (test('grepFile treats CR-only file as a single line (splits on \\n only)', () => {
     // utils.js line 474: `content.split('\\n')` splits only on \\n (LF).
@@ -1427,8 +1396,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 100: findFiles with both maxAge AND recursive (interaction test) ──
-  console.log('\nRound 100: findFiles (maxAge + recursive combined — untested interaction):');
+  section('findFiles (maxAge + recursive combined — untested interaction)');
   if (test('findFiles with maxAge AND recursive filters age across subdirectories', () => {
     const tmpDir = fs.mkdtempSync(path.join(utils.getTempDir(), 'r100-maxage-recur-'));
     const subDir = path.join(tmpDir, 'nested');
@@ -1459,8 +1427,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 101: output() with circular reference object throws (no try/catch around JSON.stringify) ──
-  console.log('\nRound 101: output() (circular reference — JSON.stringify crash):');
+  section('output() (circular reference — JSON.stringify crash)');
   if (test('output() throws TypeError on circular reference object (JSON.stringify has no try/catch)', () => {
     const circular = { a: 1 };
     circular.self = circular; // Creates circular reference
@@ -1472,8 +1439,7 @@ function runTests() {
     );
   })) passed++; else failed++;
 
-  // ── Round 103: countInFile with boolean false pattern (non-string non-RegExp) ──
-  console.log('\nRound 103: countInFile (boolean false — explicit type guard returns 0):');
+  section('countInFile (boolean false — explicit type guard returns 0)');
   if (test('countInFile returns 0 for boolean false pattern (else branch at line 443)', () => {
     // utils.js lines 438-444: countInFile checks `instanceof RegExp` then `typeof === "string"`.
     // Boolean `false` fails both checks and falls to the `else return 0` at line 443.
@@ -1496,8 +1462,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 103: grepFile with numeric 0 pattern (implicit RegExp coercion) ──
-  console.log('\nRound 103: grepFile (numeric 0 — implicit toString via RegExp constructor):');
+  section('grepFile (numeric 0 — implicit toString via RegExp constructor)');
   if (test('grepFile with numeric 0 implicitly coerces to /0/ via RegExp constructor', () => {
     // utils.js line 468: grepFile's non-RegExp path does `regex = new RegExp(pattern)`.
     // Unlike countInFile (which has explicit type guards), grepFile passes any value
@@ -1524,8 +1489,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 105: grepFile with sticky (y) flag — not stripped, causes stateful .test() ──
-  console.log('\nRound 105: grepFile (sticky y flag — not stripped like g, stateful .test() bug):');
+  section('grepFile (sticky y flag — not stripped like g, stateful .test() bug)');
 
   if (test('grepFile with /pattern/y sticky flag misses lines due to lastIndex state', () => {
     const tmpDir = fs.mkdtempSync(path.join(utils.getTempDir(), 'r105-grep-sticky-'));
@@ -1553,8 +1517,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 107: grepFile with ^$ pattern — empty line matching after split ──
-  console.log('\nRound 107: grepFile (empty line matching — ^$ on split lines, trailing \\n creates extra empty element):');
+  section('grepFile (empty line matching — ^$ on split lines, trailing \\n creates extra empty element)');
   if (test('grepFile matches empty lines with ^$ pattern including trailing newline phantom line', () => {
     const tmpDir = fs.mkdtempSync(path.join(utils.getTempDir(), 'r107-grep-empty-'));
     const testFile = path.join(tmpDir, 'test.txt');
@@ -1572,8 +1535,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 107: replaceInFile where replacement re-introduces search pattern (single-pass) ──
-  console.log('\nRound 107: replaceInFile (replacement contains search pattern — String.replace is single-pass):');
+  section('replaceInFile (replacement contains search pattern — String.replace is single-pass)');
   if (test('replaceInFile does not re-scan replacement text (single-pass, no infinite loop)', () => {
     const tmpDir = fs.mkdtempSync(path.join(utils.getTempDir(), 'r107-replace-reintr-'));
     const testFile = path.join(tmpDir, 'test.txt');
@@ -1590,8 +1552,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 106: countInFile with named capture groups — match(g) ignores group details ──
-  console.log('\nRound 106: countInFile (named capture groups — String.match(g) returns full matches only):');
+  section('countInFile (named capture groups — String.match(g) returns full matches only)');
   if (test('countInFile with named capture groups counts matches not groups', () => {
     const tmpDir = fs.mkdtempSync(path.join(utils.getTempDir(), 'r106-count-named-'));
     const testFile = path.join(tmpDir, 'test.txt');
@@ -1611,8 +1572,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 106: grepFile with multiline (m) flag — preserved, unlike g which is stripped ──
-  console.log('\nRound 106: grepFile (multiline m flag — preserved in regex, unlike g which is stripped):');
+  section('grepFile (multiline m flag — preserved in regex, unlike g which is stripped)');
   if (test('grepFile preserves multiline (m) flag and anchors work on split lines', () => {
     const tmpDir = fs.mkdtempSync(path.join(utils.getTempDir(), 'r106-grep-multiline-'));
     const testFile = path.join(tmpDir, 'test.txt');
@@ -1634,8 +1594,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 109: appendFile creating new file in non-existent directory (ensureDir + appendFileSync) ──
-  console.log('\nRound 109: appendFile (new file creation — ensureDir creates parent, appendFileSync creates file):');
+  section('appendFile (new file creation — ensureDir creates parent, appendFileSync creates file)');
   if (test('appendFile creates parent directory and new file when neither exist', () => {
     const tmpDir = fs.mkdtempSync(path.join(utils.getTempDir(), 'r109-append-new-'));
     const nestedPath = path.join(tmpDir, 'deep', 'nested', 'dir', 'newfile.txt');
@@ -1657,8 +1616,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 108: grepFile with Unicode/emoji content — UTF-16 string matching on split lines ──
-  console.log('\nRound 108: grepFile (Unicode/emoji — regex matching on UTF-16 split lines):');
+  section('grepFile (Unicode/emoji — regex matching on UTF-16 split lines)');
   if (test('grepFile finds Unicode emoji patterns across lines', () => {
     const tmpDir = fs.mkdtempSync(path.join(utils.getTempDir(), 'r108-grep-unicode-'));
     const testFile = path.join(tmpDir, 'test.txt');
@@ -1680,8 +1638,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 110: findFiles root directory unreadable — silent empty return (not throw) ──
-  console.log('\nRound 110: findFiles (root directory unreadable — EACCES on readdirSync caught silently):');
+  section('findFiles (root directory unreadable — EACCES on readdirSync caught silently)');
   if (test('findFiles returns empty array when root directory exists but is unreadable', () => {
     if (process.platform === 'win32' || process.getuid?.() === 0) {
       console.log('    (skipped — chmod ineffective on Windows/root)');
@@ -1711,8 +1668,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 113: replaceInFile with zero-width regex — inserts between every character ──
-  console.log('\nRound 113: replaceInFile (zero-width regex /(?:)/g — matches every position):');
+  section('replaceInFile (zero-width regex /(?:)/g — matches every position)');
   if (test('replaceInFile with zero-width regex /(?:)/g inserts replacement at every position', () => {
     const tmpDir = fs.mkdtempSync(path.join(utils.getTempDir(), 'r113-zero-width-'));
     const testFile = path.join(tmpDir, 'test.txt');
@@ -1737,8 +1693,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 114: replaceInFile options.all is silently ignored for RegExp search ──
-  console.log('\nRound 114: replaceInFile (options.all silently ignored for RegExp search):');
+  section('replaceInFile (options.all silently ignored for RegExp search)');
   if (test('replaceInFile ignores options.all when search is a RegExp — falls through to .replace()', () => {
     const tmpDir = fs.mkdtempSync(path.join(utils.getTempDir(), 'r114-all-regex-'));
     const testFile = path.join(tmpDir, 'test.txt');
@@ -1773,8 +1728,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 114: output with object containing BigInt — JSON.stringify throws ──
-  console.log('\nRound 114: output (object containing BigInt — JSON.stringify throws):');
+  section('output (object containing BigInt — JSON.stringify throws)');
   if (test('output throws TypeError when object contains BigInt values (JSON.stringify cannot serialize)', () => {
     // Capture original console.log to prevent actual output during test
     const originalLog = console.log;
@@ -1808,8 +1762,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 115: countInFile with empty string pattern — matches at every position boundary ──
-  console.log('\nRound 115: countInFile (empty string pattern — matches at every zero-width position):');
+  section('countInFile (empty string pattern — matches at every zero-width position)');
   if (test('countInFile with empty string pattern returns content.length + 1 (matches between every char)', () => {
     const tmpDir = fs.mkdtempSync(path.join(utils.getTempDir(), 'r115-empty-pattern-'));
     const testFile = path.join(tmpDir, 'test.txt');
@@ -1842,8 +1795,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 117: grepFile with CRLF content — split('\n') leaves \r, anchored patterns fail ──
-  console.log('\nRound 117: grepFile (CRLF content — trailing \\r breaks anchored regex patterns):');
+  section('grepFile (CRLF content — trailing \\r breaks anchored regex patterns)');
   if (test('grepFile with CRLF content: unanchored patterns work but anchored $ fails due to trailing \\r', () => {
     const tmpDir = fs.mkdtempSync(path.join(utils.getTempDir(), 'r117-grep-crlf-'));
     const testFile = path.join(tmpDir, 'test.txt');
@@ -1878,8 +1830,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 116: replaceInFile with null/undefined replacement — JS coerces to string ──
-  console.log('\nRound 116: replaceInFile (null/undefined replacement — JS coerces to string "null"/"undefined"):');
+  section('replaceInFile (null/undefined replacement — JS coerces to string "null"/"undefined")');
   if (test('replaceInFile with null replacement coerces to string "null" via String.replace ToString', () => {
     const tmpDir = fs.mkdtempSync(path.join(utils.getTempDir(), 'r116-null-replace-'));
     const testFile = path.join(tmpDir, 'test.txt');
@@ -1917,8 +1868,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 116: ensureDir with null path — throws wrapped TypeError ──
-  console.log('\nRound 116: ensureDir (null path — fs.existsSync(null) throws TypeError):');
+  section('ensureDir (null path — fs.existsSync(null) throws TypeError)');
   if (test('ensureDir with null path throws wrapped Error from TypeError (ERR_INVALID_ARG_TYPE)', () => {
     // fs.existsSync(null) throws TypeError in modern Node.js
     // Caught by ensureDir catch block, err.code !== 'EEXIST' → re-thrown as wrapped Error
@@ -1942,8 +1892,7 @@ function runTests() {
     );
   })) passed++; else failed++;
 
-  // ── Round 118: writeFile with non-string content — TypeError propagates (no try/catch) ──
-  console.log('\nRound 118: writeFile (non-string content — TypeError propagates uncaught):');
+  section('writeFile (non-string content — TypeError propagates uncaught)');
   if (test('writeFile with null/number content throws TypeError because fs.writeFileSync rejects non-string data', () => {
     const tmpDir = fs.mkdtempSync(path.join(utils.getTempDir(), 'r118-writefile-type-'));
     const testFile = path.join(tmpDir, 'test.txt');
@@ -1983,8 +1932,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 119: appendFile with non-string content — TypeError propagates (no try/catch) ──
-  console.log('\nRound 119: appendFile (non-string content — TypeError propagates like writeFile):');
+  section('appendFile (non-string content — TypeError propagates like writeFile)');
   if (test('appendFile with null/number content throws TypeError (no try/catch wrapper)', () => {
     const tmpDir = fs.mkdtempSync(path.join(utils.getTempDir(), 'r119-appendfile-type-'));
     const testFile = path.join(tmpDir, 'test.txt');
@@ -2026,8 +1974,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 120: replaceInFile with empty string search — prepend vs insert-between-every-char ──
-  console.log('\nRound 120: replaceInFile (empty string search — replace vs replaceAll dramatic difference):');
+  section('replaceInFile (empty string search — replace vs replaceAll dramatic difference)');
   if (test('replaceInFile with empty search: replace prepends at pos 0; replaceAll inserts between every char', () => {
     const tmpDir = fs.mkdtempSync(path.join(utils.getTempDir(), 'r120-empty-search-'));
     const testFile = path.join(tmpDir, 'test.txt');
@@ -2064,8 +2011,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 121: findFiles with ? glob pattern — single character wildcard ──
-  console.log('\nRound 121: findFiles (? glob pattern — converted to . regex for single char match):');
+  section('findFiles (? glob pattern — converted to . regex for single char match)');
   if (test('findFiles with ? glob matches single character only — test?.txt matches test1 but not test12', () => {
     const tmpDir = fs.mkdtempSync(path.join(utils.getTempDir(), 'r121-glob-question-'));
     try {
@@ -2095,8 +2041,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 122: findFiles dot extension escaping — *.txt must not match filetxt ──
-  console.log('\nRound 122: findFiles (dot escaping — *.txt matches file.txt but not filetxt):');
+  section('findFiles (dot escaping — *.txt matches file.txt but not filetxt)');
   if (test('findFiles escapes dots in glob pattern so *.txt only matches literal .txt extension', () => {
     const tmpDir = fs.mkdtempSync(path.join(utils.getTempDir(), 'r122-dot-escape-'));
     try {
@@ -2119,8 +2064,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 123: countInFile with overlapping patterns — match(g) is non-overlapping ──
-  console.log('\nRound 123: countInFile (overlapping patterns — String.match(/g/) is non-overlapping):');
+  section('countInFile (overlapping patterns — String.match(/g/) is non-overlapping)');
   if (test('countInFile counts non-overlapping matches only — "aaa" with /aa/g returns 1 not 2', () => {
     // utils.js line 449: `content.match(regex)` with 'g' flag returns an array of
     // non-overlapping matches. After matching "aa" starting at index 0, the engine
@@ -2157,15 +2101,14 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 123: replaceInFile with $& and $$ substitution tokens in replacement string ──
-  console.log('\nRound 123: replaceInFile ($& and $$ substitution tokens in replacement):');
+  section('replaceInFile ($& and $$ substitution tokens in replacement)');
   if (test('replaceInFile replacement string interprets $& as matched text and $$ as literal $', () => {
     // JS String.replace() interprets special patterns in the replacement string:
     //   $&  → inserts the entire matched substring
     //   $$  → inserts a literal "$" character
     //   $'  → inserts the portion after the matched substring
     //   $`  → inserts the portion before the matched substring
-    // This is different from capture groups ($1, $2) already tested in Round 91.
+    // This is different from capture groups ($1, $2) already tested above.
     const tmpDir = fs.mkdtempSync(path.join(utils.getTempDir(), 'r123-dollar-'));
     const testFile = path.join(tmpDir, 'test.txt');
     try {
@@ -2198,8 +2141,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 124: findFiles matches dotfiles (unlike shell glob where * excludes hidden files) ──
-  console.log('\nRound 124: findFiles (* glob matches dotfiles — unlike shell globbing):');
+  section('findFiles (* glob matches dotfiles — unlike shell globbing)');
   if (test('findFiles with * pattern matches dotfiles because .* regex includes hidden files', () => {
     // In shell: `ls *` excludes .hidden files. In findFiles, `*` → `.*` regex which
     // matches ANY filename including those starting with `.`. This is a behavioral
@@ -2241,8 +2183,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 125: readFile with binary content — returns garbled UTF-8, not null ──
-  console.log('\nRound 125: readFile (binary/non-UTF8 content — garbled, not null):');
+  section('readFile (binary/non-UTF8 content — garbled, not null)');
   if (test('readFile with binary content returns garbled string (not null) because UTF-8 decode does not throw', () => {
     // utils.js line 285: fs.readFileSync(filePath, 'utf8') — binary data gets UTF-8 decoded.
     // Invalid byte sequences become U+FFFD replacement characters. The function does
@@ -2280,8 +2221,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // ── Round 125: output() with undefined, NaN, Infinity — non-object primitives logged directly ──
-  console.log('\nRound 125: output() (undefined/NaN/Infinity — typeof checks and JSON.stringify):');
+  section('output() (undefined/NaN/Infinity — typeof checks and JSON.stringify)');
   if (test('output() handles undefined, NaN, Infinity as non-objects — logs directly', () => {
     // utils.js line 273: `if (typeof data === 'object')` — undefined/NaN/Infinity are NOT objects.
     // typeof undefined → "undefined", typeof NaN → "number", typeof Infinity → "number"
@@ -2317,12 +2257,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // Summary
-  console.log('\n=== Test Results ===');
-  console.log(`Passed: ${passed}`);
-  console.log(`Failed: ${failed}`);
-  console.log(`Total:  ${passed + failed}\n`);
-
+  summary(passed, failed);
   process.exit(failed > 0 ? 1 : 0);
 }
 

@@ -11,6 +11,7 @@ const path = require('path');
 const fs = require('fs');
 const os = require('os');
 const { execFileSync } = require('child_process');
+const { test, section, header, summary } = require('../lib/test-helpers');
 
 const SCRIPT = path.join(__dirname, '..', '..', 'scripts', 'setup-package-manager.js');
 
@@ -33,27 +34,13 @@ function run(args = [], env = {}) {
   }
 }
 
-// Test helper
-function test(name, fn) {
-  try {
-    fn();
-    console.log(`  \u2713 ${name}`);
-    return true;
-  } catch (err) {
-    console.log(`  \u2717 ${name}`);
-    console.log(`    Error: ${err.message}`);
-    return false;
-  }
-}
-
 function runTests() {
-  console.log('\n=== Testing setup-package-manager.js ===\n');
+  header('setup-package-manager.js');
 
   let passed = 0;
   let failed = 0;
 
-  // --help flag
-  console.log('--help:');
+  section('--help');
 
   if (test('shows help with --help flag', () => {
     const result = run(['--help']);
@@ -76,8 +63,7 @@ function runTests() {
     assert.ok(result.stdout.includes('Package Manager Setup'));
   })) passed++; else failed++;
 
-  // --detect flag
-  console.log('\n--detect:');
+  section('--detect');
 
   if (test('detects current package manager', () => {
     const result = run(['--detect']);
@@ -101,8 +87,7 @@ function runTests() {
     assert.ok(result.stdout.includes('bun'));
   })) passed++; else failed++;
 
-  // --list flag
-  console.log('\n--list:');
+  section('--list');
 
   if (test('lists available package managers', () => {
     const result = run(['--list']);
@@ -113,8 +98,7 @@ function runTests() {
     assert.ok(result.stdout.includes('Install'));
   })) passed++; else failed++;
 
-  // --global flag
-  console.log('\n--global:');
+  section('--global');
 
   if (test('rejects --global without package manager name', () => {
     const result = run(['--global']);
@@ -128,8 +112,7 @@ function runTests() {
     assert.ok(result.stderr.includes('Unknown package manager'));
   })) passed++; else failed++;
 
-  // --project flag
-  console.log('\n--project:');
+  section('--project');
 
   if (test('rejects --project without package manager name', () => {
     const result = run(['--project']);
@@ -143,8 +126,7 @@ function runTests() {
     assert.ok(result.stderr.includes('Unknown package manager'));
   })) passed++; else failed++;
 
-  // Positional argument
-  console.log('\npositional argument:');
+  section('positional argument');
 
   if (test('rejects unknown positional argument', () => {
     const result = run(['not-a-pm']);
@@ -152,8 +134,7 @@ function runTests() {
     assert.ok(result.stderr.includes('Unknown option or package manager'));
   })) passed++; else failed++;
 
-  // Environment variable
-  console.log('\nenvironment variable:');
+  section('environment variable');
 
   if (test('detects env var override', () => {
     const result = run(['--detect'], { ANTIGRAVITY_PACKAGE_MANAGER: 'pnpm' });
@@ -161,8 +142,7 @@ function runTests() {
     assert.ok(result.stdout.includes('pnpm'));
   })) passed++; else failed++;
 
-  // --detect output completeness
-  console.log('\n--detect output completeness:');
+  section('--detect output completeness');
 
   if (test('shows all three command types in detection output', () => {
     const result = run(['--detect']);
@@ -177,12 +157,11 @@ function runTests() {
     assert.ok(result.stdout.includes('(current)'), 'Should mark current PM');
   })) passed++; else failed++;
 
-  // ── Round 31: flag-as-PM-name rejection ──
   // Note: --help, --detect, --list are checked BEFORE --global/--project in argv
   // parsing, so passing e.g. --global --list triggers the --list handler first.
   // The startsWith('-') fix protects against flags that AREN'T caught earlier,
   // like --global --project or --project --unknown-flag.
-  console.log('\n--global flag validation (Round 31):');
+  section('--global flag validation');
 
   if (test('rejects --global --project (flag not caught by earlier checks)', () => {
     const result = run(['--global', '--project']);
@@ -209,7 +188,7 @@ function runTests() {
     assert.ok(result.stdout.includes('Available Package Managers'));
   })) passed++; else failed++;
 
-  console.log('\n--project flag validation (Round 31):');
+  section('--project flag validation');
 
   if (test('rejects --project --global (cross-flag confusion)', () => {
     // --global handler runs before --project, catches it first
@@ -230,8 +209,7 @@ function runTests() {
     assert.ok(result.stderr.includes('requires a package manager name'));
   })) passed++; else failed++;
 
-  // ── Round 45: output completeness and marker uniqueness ──
-  console.log('\n--detect marker uniqueness (Round 45):');
+  section('--detect marker uniqueness');
 
   if (test('--detect output shows exactly one (current) marker', () => {
     const result = run(['--detect']);
@@ -243,7 +221,7 @@ function runTests() {
     assert.ok(/\b(npm|pnpm|yarn|bun)\b/.test(currentLines[0]), 'Current marker should be on a PM line');
   })) passed++; else failed++;
 
-  console.log('\n--list output completeness (Round 45):');
+  section('--list output completeness');
 
   if (test('--list shows all four supported package managers', () => {
     const result = run(['--list']);
@@ -258,8 +236,7 @@ function runTests() {
     assert.strictEqual(installCount, 4, `Expected 4 "Install:" entries, found ${installCount}`);
   })) passed++; else failed++;
 
-  // ── Round 62: --global success path and bare PM name ──
-  console.log('\n--global success path (Round 62):');
+  section('--global success path');
 
   if (test('--global npm writes config and succeeds', () => {
     const tmpDir = path.join(os.tmpdir(), `spm-test-global-${Date.now()}`);
@@ -279,7 +256,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  console.log('\nbare PM name success (Round 62):');
+  section('bare PM name success');
 
   if (test('bare npm sets global preference and succeeds', () => {
     const tmpDir = path.join(os.tmpdir(), `spm-test-bare-${Date.now()}`);
@@ -298,7 +275,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  console.log('\n--detect source label (Round 62):');
+  section('--detect source label');
 
   if (test('--detect with env var shows source as environment', () => {
     const result = run(['--detect'], { ANTIGRAVITY_PACKAGE_MANAGER: 'pnpm' });
@@ -306,8 +283,7 @@ function runTests() {
     assert.ok(result.stdout.includes('Source: environment'), 'Should show environment as source');
   })) passed++; else failed++;
 
-  // ── Round 68: --project success path and --list (current) marker ──
-  console.log('\n--project success path (Round 68):');
+  section('--project success path');
 
   if (test('--project npm writes project config and succeeds', () => {
     const tmpDir = path.join(os.tmpdir(), `spm-test-project-${Date.now()}`);
@@ -333,7 +309,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  console.log('\n--list (current) marker (Round 68):');
+  section('--list (current) marker');
 
   if (test('--list output includes (current) marker for active PM', () => {
     const result = run(['--list']);
@@ -344,8 +320,7 @@ function runTests() {
     assert.strictEqual(currentCount, 1, `Expected exactly 1 "(current)" in --list, found ${currentCount}`);
   })) passed++; else failed++;
 
-  // ── Round 74: setGlobal catch — setPreferredPackageManager throws ──
-  console.log('\nRound 74: setGlobal catch (save failure):');
+  section('setGlobal catch (save failure)');
 
   if (test('--global npm fails when HOME is not a directory', () => {
     if (process.platform === 'win32') {
@@ -359,8 +334,7 @@ function runTests() {
       `stderr should contain Error:, got: ${result.stderr}`);
   })) passed++; else failed++;
 
-  // ── Round 74: setProject catch — setProjectPackageManager throws ──
-  console.log('\nRound 74: setProject catch (save failure):');
+  section('setProject catch (save failure)');
 
   if (test('--project npm fails when CWD is read-only', () => {
     if (process.platform === 'win32' || process.getuid?.() === 0) {
@@ -389,8 +363,7 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  // Summary
-  console.log(`\nResults: Passed: ${passed}, Failed: ${failed}`);
+  summary(passed, failed);
   process.exit(failed > 0 ? 1 : 0);
 }
 
