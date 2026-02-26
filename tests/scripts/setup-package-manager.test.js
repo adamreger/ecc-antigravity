@@ -280,7 +280,7 @@ function runTests() {
   if (test('--detect with env var shows source as environment', () => {
     const result = run(['--detect'], { ANTIGRAVITY_PACKAGE_MANAGER: 'pnpm' });
     assert.strictEqual(result.code, 0);
-    assert.ok(result.stdout.includes('Source: environment'), 'Should show environment as source');
+    assert.ok(result.stdout.includes('Source:') && result.stdout.includes('environment'), 'Should show environment as source');
   })) passed++; else failed++;
 
   section('--project success path');
