@@ -12,7 +12,8 @@
 > **Fork adapted for [Antigravity IDE](https://antigravity.google).**
 > Original repo: [affaan-m/everything-claude-code](https://github.com/affaan-m/everything-claude-code)
 
-Production-ready **workflows, skills, and rules** for software development, adapted from the battle-tested Claude Code configs by an Anthropic hackathon winner.
+# 🚧 **Pre-Production** 🚧 
+Extensive collection of Antigravity **workflows, skills, and rules** for software development, adapted from the battle-tested __Everything Claude Code__ configs by an Anthropic hackathon winner.
 
 ---
 
