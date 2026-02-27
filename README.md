@@ -1,22 +1,13 @@
+# 🚧 **Pre-Production** 🚧 
 # Everything Claude Code — Antigravity Edition
-
-![GitHub stars](https://img.shields.io/github/stars/adamreger/ecc-antigravity?style=flat&logo=github)
-![GitHub last commit](https://img.shields.io/github/last-commit/adamreger/ecc-antigravity?style=flat&logo=github)
-![GitHub issues](https://img.shields.io/github/issues/adamreger/ecc-antigravity?style=flat&logo=github)
-[![CI](https://github.com/adamreger/ecc-antigravity/actions/workflows/ci.yml/badge.svg)](https://github.com/adamreger/ecc-antigravity/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-
-![Shell](https://img.shields.io/badge/-Shell-4EAA25?logo=gnu-bash&logoColor=white)
-![TypeScript](https://img.shields.io/badge/-TypeScript-3178C6?logo=typescript&logoColor=white)
-![Python](https://img.shields.io/badge/-Python-3776AB?logo=python&logoColor=white)
-![Go](https://img.shields.io/badge/-Go-00ADD8?logo=go&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black)
-![Markdown](https://img.shields.io/badge/-Markdown-000000?logo=markdown&logoColor=white)
 
 > Built on the foundation of [Everything Claude Code](https://github.com/affaan-m/everything-claude-code) — fully reimagined for [Antigravity IDE](https://antigravity.google).
 
-# 🚧 **Pre-Production** 🚧 
-The missing playbook for Antigravity IDE — **workflows, skills, and rules** that turn Antigravity into a full-stack development powerhouse.
+The missing playbook for Antigravity IDE — a system of **workflows, skills, and rules** for high-quality agentic development.
+
+[![CI](https://github.com/adamreger/ecc-antigravity/actions/workflows/ci.yml/badge.svg)](https://github.com/adamreger/ecc-antigravity/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+![GitHub issues](https://img.shields.io/github/issues/adamreger/ecc-antigravity?style=flat&logo=github)
 
 ---
 
